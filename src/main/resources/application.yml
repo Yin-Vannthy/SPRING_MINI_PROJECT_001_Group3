@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: MiniProject
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/mini_project_db
+    username: postgres
+    password: admin
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
+
+aws:
+  access:
+    key: AKIAYS2NW5TIFDA7LPE5
+  secret:
+    key: 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
+  s3:
+    bucket: files-upload-aws-bucket
+    endpointUrl: https://files-upload-aws-bucket.s3.ap-southeast-2.amazonaws.com
+  region: ap-southeast-2
+
+server:
+  port: 8080
