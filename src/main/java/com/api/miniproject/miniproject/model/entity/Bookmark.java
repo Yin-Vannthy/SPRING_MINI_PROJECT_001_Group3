@@ -5,13 +5,16 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class Bookmark {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +34,13 @@ public class Bookmark {
 
     public BookmarkResponse toResponse(){
         return new BookmarkResponse(
-                this.id,
-                this.status,
+                article.getArticleId(),
+                article.getTitle(),
+                article.getDescription(),
                 this.createdAt,
-                this.updatedAt
+                user.getUserId(),
+                null
         );
     }
+
 }

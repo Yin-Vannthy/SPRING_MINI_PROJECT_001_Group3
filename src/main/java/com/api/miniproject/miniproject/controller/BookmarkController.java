@@ -1,13 +1,16 @@
 package com.api.miniproject.miniproject.controller;
 
-import com.api.miniproject.miniproject.model.entity.Bookmark;
-import com.api.miniproject.miniproject.model.response.BookmarkResponse;
+import com.api.miniproject.miniproject.configuration.util.APIResponseUtil;
+import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.service.BookmarkService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/bookmark")
@@ -17,12 +20,18 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     @GetMapping()
-    public List<BookmarkResponse> getBookmarks(){
-        return bookmarkService.getBookmarks();
+    @Operation(summary = "Get list of bookmark articles")
+    public ResponseEntity<?> getBookmarks(@RequestParam(required = false, defaultValue = "0") Integer pageNo,
+                                         @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                         @RequestParam(required = false, defaultValue = "articleId") String sortBy,
+                                         @RequestParam(required = false, defaultValue = "DESC") String sortDirection)
+    {
+        return ResponseEntity.ok(
+                APIResponseUtil.apiResponse(
+                        bookmarkService.getBookmarks(pageNo, pageSize, sortBy, sortDirection),
+                        HttpStatus.OK
+                )
+        );
     }
 
-    @PostMapping("/{id}")
-    public Bookmark bookmark(@PathVariable("id") Long id){
-        return bookmarkService.bookmark(id);
-    }
 }

@@ -1,52 +1,43 @@
 package com.api.miniproject.miniproject.service.serviceImpl;
 
-import com.api.miniproject.miniproject.configuration.configure.CurrentUser;
-import com.api.miniproject.miniproject.model.entity.AppUser;
+import com.api.miniproject.miniproject.model.dto.ArticleDto;
 import com.api.miniproject.miniproject.model.entity.Article;
 import com.api.miniproject.miniproject.model.entity.Bookmark;
-import com.api.miniproject.miniproject.model.response.BookmarkResponse;
+import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.repository.ArticleRepository;
-import com.api.miniproject.miniproject.repository.BookmarkRepository;
-import com.api.miniproject.miniproject.repository.UserRepository;
 import com.api.miniproject.miniproject.service.BookmarkService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class BookmarkServiceImpl implements BookmarkService {
-    private final BookmarkRepository bookmarkRepository;
-    private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
 
     @Override
-    public Bookmark bookmark(Long articleId) {
-        Long userId = CurrentUser.getCurrentUser().getUserId();
-        System.out.println("Id: " + userId);
+    public List<ArticleDto> getBookmarks(Integer pageNo, Integer pageSize, String sortBy, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        AppUser appUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        Page<Article> articles = articleRepository.findAll(pageable);
 
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid article ID"));
-
-        Bookmark bookmark = new Bookmark();
-        bookmark.setArticle(article);
-        bookmark.setStatus(true);
-        bookmark.setCreatedAt(LocalDateTime.now());
-        bookmark.setUpdatedAt(LocalDateTime.now());
-        bookmark.setUser(appUser);
-
-        return bookmarkRepository.save(bookmark);
+        return articles.getContent().stream()
+                .filter(article -> article.getBookmarks().stream().anyMatch(Bookmark::getStatus))
+                .map(Article::toArticleResponseWithCategoryIds)
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public List<BookmarkResponse> getBookmarks() {
-        List<Bookmark> bookmarks = bookmarkRepository.findAll();
-        return bookmarks.stream().map(Bookmark::toResponse).toList();
-    }
+
+
+
 
 }
