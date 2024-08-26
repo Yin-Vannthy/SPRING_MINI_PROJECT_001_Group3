@@ -1,6 +1,7 @@
 package com.api.miniproject.miniproject.service.serviceImpl;
 
 import com.api.miniproject.miniproject.configuration.configure.CurrentUser;
+import com.api.miniproject.miniproject.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.dto.ArticleDto;
 import com.api.miniproject.miniproject.model.dto.BookmarkDto;
 import com.api.miniproject.miniproject.model.entity.AppUser;
@@ -50,11 +51,11 @@ public class BookmarkServiceImpl implements BookmarkService {
     public String postBookmark(Long articleId) {
         // Fetch the user entity from the database
         AppUser appUser = appUserRepository.findById(CurrentUser.getCurrentUser().getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new CustomNotFoundException("Invalid user ID"));
 
         // Fetch the article entity from the database
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid article ID"));
+                .orElseThrow(() -> new CustomNotFoundException("No article with id: " + articleId + " found."));
 
         // Check if the article is already bookmarked by the user
         Optional<Bookmark> existingBookmark = bookmarkRepository.findByArticleAndUser(article, appUser);
@@ -99,15 +100,15 @@ public class BookmarkServiceImpl implements BookmarkService {
 
         // Fetch the user entity from the database
         AppUser appUser = appUserRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
+                .orElseThrow(() -> new CustomNotFoundException("Invalid user ID: " + userId));
 
         // Fetch the article entity from the database
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid article ID: " + articleId));
+                .orElseThrow(() -> new CustomNotFoundException("No article with id: " + articleId + " found."));
 
         // Fetch the existing bookmark (or throw if not found)
         Bookmark bookmark = bookmarkRepository.findByArticleAndUser(article, appUser)
-                .orElseThrow(() -> new IllegalArgumentException("Bookmark does not exist for this article and user."));
+                .orElseThrow(() -> new CustomNotFoundException("Bookmark does not exist for this article and user."));
 
         // Check if the current status is false (inactive)
         if (!bookmark.getStatus()) {
