@@ -20,11 +20,11 @@ public class Comment {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.MERGE}, optional = false)
     @JoinColumn(name = "article_id", referencedColumnName = "articleId")
     private Article article;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = {CascadeType.REMOVE, CascadeType.MERGE}, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private AppUser user;
 

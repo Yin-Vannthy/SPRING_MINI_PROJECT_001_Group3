@@ -5,4 +5,18 @@ public class Enums {
         AUTHOR,
         READER,
     }
+    public enum Category {
+        categoryId,
+        name,
+        amountOfArticles,
+        createdAt,
+        updatedAt
+    }
+    public enum Article {
+        articleId,
+        title,
+        description,
+        createdAt,
+        updatedAt
+    }
 }

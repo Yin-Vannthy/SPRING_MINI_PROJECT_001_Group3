@@ -55,6 +55,10 @@ public class AppUserServiceImpl implements AppUserService {
             }
         });
 
+        if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
+            throw new CustomNotFoundException("Confirm Passwords don't match");
+        }
+
         return userRepository.save(userRequest.toUserEntity(CurrentUser.getCurrentUser().getUserId(), role, passwordEncoder.encode(userRequest.getPassword()))).toUserResponse();
     }
 

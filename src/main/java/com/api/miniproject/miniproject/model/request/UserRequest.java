@@ -19,6 +19,7 @@ public class UserRequest {
     @NotEmpty(message = "Name Can not be empty")
     @NotBlank(message = "Name Can not be blank")
     @NotNull(message = "Name Can not be null")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Username allow only character")
     private String username;
 
     @NotEmpty(message = "Address Can not be empty")
