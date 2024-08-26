@@ -1,5 +1,6 @@
 package com.api.miniproject.miniproject.model.entity;
 
+import com.api.miniproject.miniproject.model.response.BookmarkResponse;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,4 +28,13 @@ public class Bookmark {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private AppUser user;
+
+    public BookmarkResponse toResponse(){
+        return new BookmarkResponse(
+                this.id,
+                this.status,
+                this.createdAt,
+                this.updatedAt
+        );
+    }
 }
