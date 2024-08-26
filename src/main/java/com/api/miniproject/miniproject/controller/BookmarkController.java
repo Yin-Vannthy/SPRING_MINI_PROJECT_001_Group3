@@ -34,4 +34,15 @@ public class BookmarkController {
         );
     }
 
+    @PostMapping("/{id}")
+    @Operation(summary = "Add bookmark on any article")
+    public ResponseEntity<?> bookmark(@PathVariable("id") Long articleId){
+        return ResponseEntity.ok(
+                APIResponseUtil.apiResponse(
+                        bookmarkService.postBookmark(articleId),
+                        HttpStatus.CREATED
+                )
+        );
+    }
+
 }

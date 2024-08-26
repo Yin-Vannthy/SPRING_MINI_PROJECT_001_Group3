@@ -10,10 +10,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
-    Page<Bookmark> findBookmarkByStatusAndUser(Boolean status, AppUser user, Pageable pageable);
 
-
+    Optional<Bookmark> findByArticleAndUser(Article article, AppUser user);
 }

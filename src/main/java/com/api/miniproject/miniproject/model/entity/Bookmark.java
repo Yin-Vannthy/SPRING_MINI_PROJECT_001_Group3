@@ -1,5 +1,6 @@
 package com.api.miniproject.miniproject.model.entity;
 
+import com.api.miniproject.miniproject.model.dto.BookmarkDto;
 import com.api.miniproject.miniproject.model.response.BookmarkResponse;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,13 +33,9 @@ public class Bookmark {
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private AppUser user;
 
-    public BookmarkResponse toResponse(){
-        return new BookmarkResponse(
-                article.getArticleId(),
-                article.getTitle(),
-                article.getDescription(),
-                this.createdAt,
-                user.getUserId(),
+    public BookmarkDto toResponse(){
+        return new BookmarkDto(
+                null,
                 null
         );
     }

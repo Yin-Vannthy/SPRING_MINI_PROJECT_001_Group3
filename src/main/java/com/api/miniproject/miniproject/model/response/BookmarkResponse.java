@@ -11,12 +11,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class BookmarkResponse {
-    private Long articleId;
-    private String title;
-    private String description;
-    private LocalDateTime createAt;
-    private Long ownerArticle;
-    private List<Long> categoryIdList;
+    private String message;
+    private String status;
 }
+
