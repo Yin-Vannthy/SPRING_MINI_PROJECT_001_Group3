@@ -29,6 +29,8 @@ public class BookmarkServiceImpl implements BookmarkService {
     private final ArticleRepository articleRepository;
     private final BookmarkRepository bookmarkRepository;
 
+
+
     @Override
     public List<ArticleDto> getBookmarks(Integer pageNo, Integer pageSize, String sortBy, String sortDirection) {
         Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name())
@@ -45,12 +47,9 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public BookmarkDto postBookmark(Long articleId) {
-        // Get the current user's ID (assuming CurrentUser class handles JWT or authentication)
-        Long userId = CurrentUser.getCurrentUser().getUserId();
-
+    public String postBookmark(Long articleId) {
         // Fetch the user entity from the database
-        AppUser appUser = appUserRepository.findById(userId)
+        AppUser appUser = appUserRepository.findById(CurrentUser.getCurrentUser().getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         // Fetch the article entity from the database
@@ -63,66 +62,70 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (existingBookmark.isPresent()) {
             Bookmark bookmark = existingBookmark.get();
 
-            // Reactivate the bookmark if it was previously inactive
-            if (!bookmark.getStatus()) {
-                bookmark.setStatus(true);  // Reactivate bookmark
-                bookmark.setUpdatedAt(LocalDateTime.now());
-                return bookmarkRepository.save(bookmark).toResponse();
-            } else {
-                // Bookmark is already active, return existing bookmark
-                return bookmark.toResponse();
+            // If the bookmark is active, return a message indicating it's already bookmarked
+            if (bookmark.getStatus()) {
+                return "Article is already bookmarked.";
             }
+
+            // If the bookmark was inactive, reactivate it
+            bookmark.setStatus(true);
+            bookmark.setUpdatedAt(LocalDateTime.now());
+            bookmarkRepository.save(bookmark);
+
+            return "An article id " + articleId + " already bookmarked!";
         }
 
-        // If no bookmark exists, create a new one using the toEntity method from BookmarkDto
-        BookmarkDto bookmarkDTO = new BookmarkDto();
-        bookmarkDTO.setArticleId(articleId);
-        bookmarkDTO.setStatus(true);  // Set the status as active
+        // If no bookmark exists, create a new one using BookmarkDto
+        BookmarkDto bookmarkDTO = new BookmarkDto(articleId, true);  // Active by default
 
-        // Convert DTO to Bookmark entity using toEntity()
-        Bookmark bookmark = bookmarkDTO.toEntity(article, appUser);
+        // Convert DTO to entity
+        Bookmark newBookmark = bookmarkDTO.toEntity(article, appUser);
+        newBookmark.setCreatedAt(LocalDateTime.now());
+        newBookmark.setUpdatedAt(LocalDateTime.now());
 
-        // Save the bookmark and return it
-        return bookmarkRepository.save(bookmark).toResponse();
+        // Save the new bookmark
+        bookmarkRepository.save(newBookmark);
+
+        // Return success message
+        return "An article id " + articleId + " is bookmarked successfully.";
     }
 
 
+
     @Override
-    public BookmarkDto updateBookmark(Long articleId) {
+    public String updateBookmark(Long articleId) {
+        // Fetch the current user's ID
         Long userId = CurrentUser.getCurrentUser().getUserId();
 
         // Fetch the user entity from the database
         AppUser appUser = appUserRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
 
         // Fetch the article entity from the database
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid article ID"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid article ID: " + articleId));
 
-        // Check if the article is already bookmarked by the user
-        Optional<Bookmark> existingBookmark = bookmarkRepository.findByArticleAndUser(article, appUser);
+        // Fetch the existing bookmark (or throw if not found)
+        Bookmark bookmark = bookmarkRepository.findByArticleAndUser(article, appUser)
+                .orElseThrow(() -> new IllegalArgumentException("Bookmark does not exist for this article and user."));
 
-        if (existingBookmark.isEmpty()) {
-            throw new IllegalArgumentException("Bookmark does not exist for this article and user.");
+        // Check if the current status is false (inactive)
+        if (!bookmark.getStatus()) {
+            // If the bookmark is already inactive, return without making any changes
+            return "An Article id "+articleId+" is already unmark.";
         }
 
-        Bookmark bookmark = existingBookmark.get();
-
-        // Update the bookmark details as needed
-        // For example, you can toggle the status
-        bookmark.setStatus(!bookmark.getStatus());
+        // If the bookmark is active, change its status to inactive (false)
+        bookmark.setStatus(false);
         bookmark.setUpdatedAt(LocalDateTime.now());
 
         // Save the updated bookmark
-        Bookmark updatedBookmark = bookmarkRepository.save(bookmark);
+        bookmarkRepository.save(bookmark);
 
-        // Convert the updated bookmark to BookmarkDto
-        BookmarkDto bookmarkDto = new BookmarkDto();
-        bookmarkDto.setArticleId(updatedBookmark.getArticle().getArticleId());
-        bookmarkDto.setStatus(updatedBookmark.getStatus());
-
-        return bookmarkDto;
+        // Return success message
+        return "An article id "+articleId+" is unmarked successfully.";
     }
+
 
 
 

@@ -1,15 +1,16 @@
 package com.api.miniproject.miniproject.controller;
 
 import com.api.miniproject.miniproject.configuration.util.APIResponseUtil;
-import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.service.BookmarkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -37,23 +38,30 @@ public class BookmarkController {
     @PostMapping("/{id}")
     @Operation(summary = "Add bookmark on any article")
     public ResponseEntity<?> bookmark(@PathVariable("id") Long articleId){
-        return ResponseEntity.ok(
-                APIResponseUtil.apiResponse(
-                        bookmarkService.postBookmark(articleId),
-                        HttpStatus.CREATED
-                )
-        );
+        String message = bookmarkService.postBookmark(articleId);
+
+        // Structure the response as a map with a message and status
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", message);
+        response.put("status", "OK");
+
+        // Return the structured response
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Change status when this article is no longer your favorite")
     public ResponseEntity<?> updateBookmark(@PathVariable("id") Long articleId){
-        return ResponseEntity.ok(
-                APIResponseUtil.apiResponse(
-                        bookmarkService.updateBookmark(articleId),
-                        HttpStatus.OK
-                )
-        );
+        // Call the service method to update the bookmark status
+        String message = bookmarkService.updateBookmark(articleId);
+
+        // Structure the response as a map with a message and status
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", message);
+        response.put("status", "OK");
+
+        // Return the structured response
+        return ResponseEntity.ok(response);
     }
 
 }
