@@ -1,7 +1,7 @@
-package com.api.miniproject.miniproject.model.response;
+package com.api.miniproject.miniproject.model.dto;
 
 import com.api.miniproject.miniproject.model.entity.AppUser;
-import com.api.miniproject.miniproject.model.entity.Article;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +13,10 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentResponse {
+public class CommentDto {
     private Long commentId;
     private String cmt;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
-//    private LocalDateTime updatedAt;
-//    private Article article;
-    private AppUser user;
+    private UserDto user;
 }

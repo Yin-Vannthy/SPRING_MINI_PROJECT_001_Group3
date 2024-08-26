@@ -2,13 +2,12 @@ package com.api.miniproject.miniproject.controller;
 
 import com.api.miniproject.miniproject.model.request.CommentRequest;
 import com.api.miniproject.miniproject.model.response.ApiResponse;
-import com.api.miniproject.miniproject.model.response.CommentResponse;
+import com.api.miniproject.miniproject.model.dto.CommentDto;
 import com.api.miniproject.miniproject.service.CommentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 @SecurityRequirement(name = "bearerAuth")
@@ -20,18 +19,18 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<CommentResponse>> getCommentById(@PathVariable Long id) {
-        CommentResponse commentResponse = commentService.getCommentById(id);
+    public ResponseEntity<ApiResponse<CommentDto>> getCommentById(@PathVariable Long id) {
+        CommentDto commentDto = commentService.getCommentById(id);
         return ResponseEntity.ok(ApiResponse
-                .<CommentResponse>builder()
+                .<CommentDto>builder()
                 .status(HttpStatus.OK)
                 .code(200)
-                .payload(commentResponse)
+                .payload(commentDto)
                 .build()
         );
     }
 
-    @DeleteMapping
+    @DeleteMapping("{id}")
     public ResponseEntity<?> deleteCommentById(@PathVariable Long id) {
         commentService.deleteCommentById(id);
         return ResponseEntity.ok(ApiResponse
@@ -43,14 +42,14 @@ public class CommentController {
         );
     }
 
-    @PutMapping
-    public ResponseEntity<ApiResponse<CommentResponse>> updateCommentById(@PathVariable Long id, @RequestBody CommentRequest commentRequest){
-        CommentResponse commentResponse = commentService.updateCommentById(id, commentRequest);
+    @PutMapping("{id}")
+    public ResponseEntity<ApiResponse<CommentDto>> updateCommentById(@PathVariable Long id, @RequestBody CommentRequest commentRequest){
+        CommentDto commentDto = commentService.updateCommentById(id, commentRequest);
         return ResponseEntity.ok(ApiResponse
-                .<CommentResponse>builder()
+                .<CommentDto>builder()
                 .status(HttpStatus.OK)
                 .code(200)
-                .payload(commentResponse)
+                .payload(commentDto)
                 .build()
         );
     }
