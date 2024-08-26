@@ -1,9 +1,8 @@
 package com.api.miniproject.miniproject.model.entity;
 
+import com.api.miniproject.miniproject.model.response.CommentResponse;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +27,9 @@ public class Comment {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private AppUser user;
+
+
+    public CommentResponse toResponse(){
+        return new CommentResponse(commentId, cmt, createdAt, user);
+    }
 }
