@@ -18,11 +18,19 @@ public class CategoryArticle {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.MERGE}, optional = false)
     @JoinColumn(name = "article_id", referencedColumnName = "articleId")
     private Article article;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE, CascadeType.MERGE}, optional = false)
     @JoinColumn(name = "category_id", referencedColumnName = "categoryId")
     private Category category;
+
+
+    public CategoryArticle(Category category, Article article) {
+        this.article = article;
+        this.category = category;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = null;
+    }
 }

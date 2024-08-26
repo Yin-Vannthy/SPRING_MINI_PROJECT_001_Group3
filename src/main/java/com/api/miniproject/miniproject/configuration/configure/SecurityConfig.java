@@ -44,7 +44,10 @@ public class SecurityConfig {
                                 "/api/v1/authentication/**"
                         ).permitAll()
                         .requestMatchers(
-                                "/api/v1/user/**"
+                                "/api/v1/user/**",
+                                "/api/v1/author/category/**",
+                                "/api/v1/author/**",
+                                "/api/v1/article/**"
                         ).authenticated()
                         .anyRequest().authenticated()
                 )

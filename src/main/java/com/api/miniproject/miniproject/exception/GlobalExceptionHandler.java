@@ -1,5 +1,6 @@
 package com.api.miniproject.miniproject.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.net.URI;
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -64,6 +66,17 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle("Bad Request");
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         problemDetail.setProperty("error", errors);
+        return problemDetail;
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ProblemDetail handleAccessDeniedException(HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED");
+        problemDetail.setType(URI.create("about:blank"));
+        problemDetail.setTitle("UNAUTHORIZED");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        problemDetail.setProperty("path", request.getRequestURI());
         return problemDetail;
     }
 }
