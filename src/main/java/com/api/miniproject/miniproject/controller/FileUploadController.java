@@ -2,6 +2,7 @@ package com.api.miniproject.miniproject.controller;
 
 import com.api.miniproject.miniproject.service.FileUploadService;
 import com.api.miniproject.miniproject.configuration.util.APIResponseUtil;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/v1/files-upload")
 @AllArgsConstructor

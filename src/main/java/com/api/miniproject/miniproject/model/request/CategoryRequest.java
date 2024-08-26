@@ -19,7 +19,7 @@ public class CategoryRequest {
     private String categoryName;
 
     public Category toCategoryEntity(AppUser currentUser) {
-        return new Category(null, this.categoryName, null, LocalDateTime.now(), null, currentUser);
+        return new Category(null, this.categoryName.trim(), null, LocalDateTime.now(), null, currentUser);
     }
 
 }

@@ -1,12 +1,14 @@
 package com.api.miniproject.miniproject.model.dto;
 
 import com.api.miniproject.miniproject.model.entity.AppUser;
+import com.api.miniproject.miniproject.model.entity.Article;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -24,10 +26,14 @@ public class ArticleDto {
     private LocalDateTime updatedAt;
 
     private Long ownerOfArticle;
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Long> categoryIdList;
 
-    public ArticleDto(Long articleId, String title, String description, LocalDateTime createdAt, LocalDateTime updatedAt, AppUser user, List<Long> categoryIds) {
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<CommentDto> commentList;
+
+    public ArticleDto(Long articleId, String title, String description, LocalDateTime createdAt, LocalDateTime updatedAt, AppUser user, List<Long> categoryIds, List<CommentDto> comments) {
         this.articleId = articleId;
         this.title = title;
         this.description = description;
@@ -35,5 +41,10 @@ public class ArticleDto {
         this.updatedAt = updatedAt;
         this.ownerOfArticle = user.getUserId();
         this.categoryIdList = categoryIds;
+        this.commentList = comments;
+    }
+
+    public Article toArticleEntity(){
+        return new Article(this.articleId, this.title, this.description, this.createdAt, this.updatedAt);
     }
 }

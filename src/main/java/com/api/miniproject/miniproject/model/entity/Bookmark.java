@@ -27,4 +27,12 @@ public class Bookmark {
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.REMOVE, CascadeType.MERGE})
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private AppUser user;
+
+    public Bookmark(Article articleEntity, AppUser user) {
+        this.id = null;
+        this.status = Boolean.TRUE;
+        this.createdAt = LocalDateTime.now();
+        this.article = articleEntity;
+        this.user = user;
+    }
 }

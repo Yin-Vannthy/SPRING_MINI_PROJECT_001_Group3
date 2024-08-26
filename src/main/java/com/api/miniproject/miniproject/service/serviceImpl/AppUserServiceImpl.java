@@ -1,10 +1,11 @@
 package com.api.miniproject.miniproject.service.serviceImpl;
 
 import com.api.miniproject.miniproject.configuration.configure.CurrentUser;
-import com.api.miniproject.miniproject.exception.CustomNotFoundException;
+import com.api.miniproject.miniproject.configuration.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.dto.UserDto;
 import com.api.miniproject.miniproject.model.entity.AppUser;
 import com.api.miniproject.miniproject.model.enums.Enums;
+import com.api.miniproject.miniproject.model.request.PasswordRequest;
 import com.api.miniproject.miniproject.model.request.UserRequest;
 import com.api.miniproject.miniproject.repository.UserRepository;
 import com.api.miniproject.miniproject.service.AppUserService;
@@ -13,8 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 
 @Service
@@ -25,21 +24,21 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email).orElseThrow(
+        return userRepository.findByEmail(email.toLowerCase().trim()).orElseThrow(
                 () -> new CustomNotFoundException("No user found with email " + email)
         );
     }
 
     @Override
     public UserDto saveUser(UserRequest userRequest, Enums.Roles role) {
-        if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
+        if (!userRequest.getPassword().trim().equals(userRequest.getConfirmPassword().trim())) {
             throw new CustomNotFoundException("Confirm Passwords don't match");
         }
 
-        if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(userRequest.getEmail().toLowerCase().trim()).isPresent()) {
             throw new CustomNotFoundException("This email is already in use");
         }
-        return userRepository.save(userRequest.toUserEntity(role, passwordEncoder.encode(userRequest.getPassword()))).toUserResponse();
+        return userRepository.save(userRequest.toUserEntity(role.name(), passwordEncoder.encode(userRequest.getPassword()).trim())).toUserResponse();
     }
 
     @Override
@@ -49,21 +48,34 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public UserDto updateCurrentUser(UserRequest userRequest, Enums.Roles role) {
-        userRepository.findByEmail(userRequest.getEmail()).ifPresent(user -> {
-            if (!user.getUserId().equals(CurrentUser.getCurrentUser().getUserId())) {
-                throw new CustomNotFoundException("This email is already in use by another user.");
-            }
-        });
+        AppUser user = userRepository.findByEmail(userRequest.getEmail().toLowerCase().trim())
+                .filter(u -> u.getUserId().equals(CurrentUser.getCurrentUser().getUserId()))
+                .orElseThrow(() -> new CustomNotFoundException("This email is already in use by another user."));
 
-        if (!userRequest.getPassword().equals(userRequest.getConfirmPassword())) {
+        if (!userRequest.getPassword().trim().equals(userRequest.getConfirmPassword().trim())) {
             throw new CustomNotFoundException("Confirm Passwords don't match");
         }
 
-        return userRepository.save(userRequest.toUserEntity(CurrentUser.getCurrentUser().getUserId(), role, passwordEncoder.encode(userRequest.getPassword()))).toUserResponse();
+        return userRepository
+                .save(userRequest.toUserEntity(user.getCreatedAt() ,CurrentUser.getCurrentUser().getUserId(), role.name(), passwordEncoder.encode(userRequest.getPassword().trim())))
+                .toUserResponse();
     }
 
     @Override
-    public Optional<AppUser> getUserById(Long userId) {
-        return userRepository.findById(userId);
+    public UserDto forgetPassword(PasswordRequest passwordRequest) {
+        AppUser appUser = userRepository.findByEmail(passwordRequest.getEmail().toLowerCase().trim())
+                .orElseThrow(() -> new CustomNotFoundException("No user found with email " + passwordRequest.getEmail().toLowerCase().trim()));
+
+        if (!passwordRequest.getPassword().trim().equals(passwordRequest.getConfirmPassword().trim())) {
+            throw new CustomNotFoundException("Confirm Passwords don't match");
+        }
+
+        if (passwordEncoder.matches(passwordRequest.getPassword().trim(), appUser.getPassword())) {
+            throw new CustomNotFoundException("New password can not be the same as old password");
+        }
+
+        appUser.setPassword(passwordEncoder.encode(passwordRequest.getPassword().trim()));
+
+        return userRepository.save(appUser).toUserResponse();
     }
 }

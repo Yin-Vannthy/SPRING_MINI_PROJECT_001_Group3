@@ -56,7 +56,7 @@ public class CategoryController {
     @GetMapping("getCategories/all")
     public ResponseEntity<?> getCategories(
             @RequestParam(defaultValue = "0", required = false) Integer pageNo,
-            @RequestParam(defaultValue = "5", required = false) Integer pageSize,
+            @RequestParam(defaultValue = "10", required = false) Integer pageSize,
             @RequestParam(defaultValue = "categoryId", required = false) Enums.Category sortBy,
             @RequestParam(defaultValue = "DESC", required = false) Sort.Direction sortDirection
     ) {

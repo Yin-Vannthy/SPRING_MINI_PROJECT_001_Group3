@@ -1,14 +1,12 @@
-package com.api.miniproject.miniproject.exception;
+package com.api.miniproject.miniproject.configuration.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.net.URI;
@@ -19,8 +17,8 @@ import java.util.HashMap;
 @RestControllerAdvice
 @RestController
 public class GlobalExceptionHandler {
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({CustomNotFoundException.class})
     public ProblemDetail handlerAllNotFoundException(CustomNotFoundException e) {
 
@@ -33,9 +31,21 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ProblemDetail handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Malformed JSON request");
+        problemDetail.setType(URI.create("about:blank"));
+        problemDetail.setTitle("Bad Request");
+        problemDetail.setDetail("The request body is malformed. Please check the JSON format and try again.");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        problemDetail.setProperty("message", "Please ensure your request payload is in the correct format.");
+        return problemDetail;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handlerArgumentNotValidException(MethodArgumentNotValidException e) {
-
         HashMap<String, String> errors = new HashMap<>();
         for(FieldError fieldError : e.getBindingResult().getFieldErrors()) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
@@ -48,10 +58,10 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
+
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ProblemDetail handleMethodValidationException(HandlerMethodValidationException e) {
         HashMap<String, String> errors = new HashMap<>();
-
         for (var parameterError : e.getAllValidationResults()) {
             String parameterName = parameterError.getMethodParameter().getParameterName();
             //get error message

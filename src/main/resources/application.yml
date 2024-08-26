@@ -1,11 +1,6 @@
 spring:
   application:
     name: MiniProject
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://104.248.157.125:5434/postgres
-    username: spring_minipj_g3
-    password: password
   jpa:
     show-sql: true
     hibernate:
@@ -20,7 +15,8 @@ spring:
       file-size-threshold: 2KB
       max-file-size: 200MB
       max-request-size: 215MB
-
+  profiles:
+    active: dev
 aws:
   access:
     key: AKIAYS2NW5TIFDA7LPE5

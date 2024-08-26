@@ -1,7 +1,6 @@
 package com.api.miniproject.miniproject.model.request;
 
 import com.api.miniproject.miniproject.model.entity.AppUser;
-import com.api.miniproject.miniproject.model.enums.Enums;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -47,11 +46,11 @@ public class UserRequest {
 
     private String confirmPassword;
 
-    public AppUser toUserEntity(Enums.Roles role, String password) {
-        return new AppUser(null, this.username,this.address, this.phoneNumber, this.email, password, role,LocalDateTime.now(), null);
+    public AppUser toUserEntity(String role, String password) {
+        return new AppUser(null, this.username.trim(),this.address.trim(), this.phoneNumber.trim(), this.email.toLowerCase().trim(), password.trim(), role,LocalDateTime.now(), null);
     }
 
-    public AppUser toUserEntity(Long userId, Enums.Roles role, String password) {
-        return new AppUser(userId, this.username,this.address, this.phoneNumber, this.email, password, role,LocalDateTime.now(), null);
+    public AppUser toUserEntity(LocalDateTime createdAt, Long userId, String role, String password) {
+        return new AppUser(userId, this.username.trim(),this.address.trim(), this.phoneNumber.trim(), this.email.toLowerCase().trim(), password.trim(), role, createdAt, LocalDateTime.now());
     }
 }

@@ -1,8 +1,9 @@
 package com.api.miniproject.miniproject.controller;
 
-import com.api.miniproject.miniproject.exception.CustomNotFoundException;
+import com.api.miniproject.miniproject.configuration.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.model.request.AuthRequest;
+import com.api.miniproject.miniproject.model.request.PasswordRequest;
 import com.api.miniproject.miniproject.model.request.UserRequest;
 import com.api.miniproject.miniproject.configuration.security.JwtService;
 import com.api.miniproject.miniproject.service.AppUserService;
@@ -16,7 +17,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import com.api.miniproject.miniproject.model.entity.AppUser;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -63,8 +63,8 @@ public class AuthenticationController {
     @Operation(summary = "Login via credentials to get token")
     @PostMapping("login")
     public ResponseEntity<?> authenticate(@Valid @RequestBody AuthRequest authRequest) throws Exception {
-        authenticate(authRequest.getEmail().toLowerCase(), authRequest.getPassword());
-        final UserDetails userDetails = appUserService.loadUserByUsername(authRequest.getEmail().toLowerCase());
+        authenticate(authRequest.getEmail().toLowerCase().trim(), authRequest.getPassword().trim());
+        final UserDetails userDetails = appUserService.loadUserByUsername(authRequest.getEmail().toLowerCase().trim());
         final String token = jwtService.generateToken(userDetails);
         Map<String, String> payload = new HashMap<>();
         payload.put("token", token);
@@ -72,6 +72,17 @@ public class AuthenticationController {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         payload,
+                        HttpStatus.OK
+                )
+        );
+    }
+
+    @Operation(summary = "Forget password")
+    @PutMapping("forgetPassword")
+    public ResponseEntity<?> forgetPassword(@Valid @RequestBody PasswordRequest passwordRequest) {
+        return ResponseEntity.ok(
+                APIResponseUtil.apiResponse(
+                        appUserService.forgetPassword(passwordRequest),
                         HttpStatus.OK
                 )
         );

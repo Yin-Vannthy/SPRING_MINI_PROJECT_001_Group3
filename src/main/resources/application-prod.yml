@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://104.248.157.125:5434/postgres
+    username: spring_minipj_g3
+    password: password

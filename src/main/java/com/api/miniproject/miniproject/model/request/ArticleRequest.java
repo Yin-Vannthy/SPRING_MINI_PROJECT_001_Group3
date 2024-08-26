@@ -12,7 +12,7 @@ public class ArticleRequest {
     @NotEmpty(message = "Title Can not be empty")
     @NotBlank(message = "Title Can not be blank")
     @NotNull(message = "Title Can not be null")
-    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Title allow only character")
+    @Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Title allow only character and number")
     private String title;
 
     @NotEmpty(message = "Description Can not be empty")
@@ -25,6 +25,6 @@ public class ArticleRequest {
     private List<Long> categoriesId;
 
     public Article toArticleEntity(Article article, AppUser user) {
-        return new Article(article.getArticleId(),article.getCreatedAt(), this.title, this.description, user);
+        return new Article(article.getArticleId(),article.getCreatedAt(), this.title.trim(), this.description.trim(), user);
     }
 }
