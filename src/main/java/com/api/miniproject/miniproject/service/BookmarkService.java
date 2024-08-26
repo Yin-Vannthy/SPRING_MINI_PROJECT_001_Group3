@@ -16,4 +16,6 @@ public interface BookmarkService {
 
 
     BookmarkDto postBookmark(Long articleId);
+
+    BookmarkDto updateBookmark(Long articleId);
 }

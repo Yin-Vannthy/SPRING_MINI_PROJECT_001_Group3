@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,21 +59,69 @@ public class BookmarkServiceImpl implements BookmarkService {
 
         // Check if the article is already bookmarked by the user
         Optional<Bookmark> existingBookmark = bookmarkRepository.findByArticleAndUser(article, appUser);
+
         if (existingBookmark.isPresent()) {
-            return existingBookmark.get().toResponse();  // Return the existing bookmark if already present
+            Bookmark bookmark = existingBookmark.get();
+
+            // Reactivate the bookmark if it was previously inactive
+            if (!bookmark.getStatus()) {
+                bookmark.setStatus(true);  // Reactivate bookmark
+                bookmark.setUpdatedAt(LocalDateTime.now());
+                return bookmarkRepository.save(bookmark).toResponse();
+            } else {
+                // Bookmark is already active, return existing bookmark
+                return bookmark.toResponse();
+            }
         }
 
-        // If no bookmark exists, create a new one using the toEntity method from BookmarkDTO
+        // If no bookmark exists, create a new one using the toEntity method from BookmarkDto
         BookmarkDto bookmarkDTO = new BookmarkDto();
         bookmarkDTO.setArticleId(articleId);
-        bookmarkDTO.setStatus(true);  // Set the status as active, or handle dynamically as needed
+        bookmarkDTO.setStatus(true);  // Set the status as active
 
         // Convert DTO to Bookmark entity using toEntity()
         Bookmark bookmark = bookmarkDTO.toEntity(article, appUser);
 
         // Save the bookmark and return it
         return bookmarkRepository.save(bookmark).toResponse();
+    }
 
+
+    @Override
+    public BookmarkDto updateBookmark(Long articleId) {
+        Long userId = CurrentUser.getCurrentUser().getUserId();
+
+        // Fetch the user entity from the database
+        AppUser appUser = appUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+
+        // Fetch the article entity from the database
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid article ID"));
+
+        // Check if the article is already bookmarked by the user
+        Optional<Bookmark> existingBookmark = bookmarkRepository.findByArticleAndUser(article, appUser);
+
+        if (existingBookmark.isEmpty()) {
+            throw new IllegalArgumentException("Bookmark does not exist for this article and user.");
+        }
+
+        Bookmark bookmark = existingBookmark.get();
+
+        // Update the bookmark details as needed
+        // For example, you can toggle the status
+        bookmark.setStatus(!bookmark.getStatus());
+        bookmark.setUpdatedAt(LocalDateTime.now());
+
+        // Save the updated bookmark
+        Bookmark updatedBookmark = bookmarkRepository.save(bookmark);
+
+        // Convert the updated bookmark to BookmarkDto
+        BookmarkDto bookmarkDto = new BookmarkDto();
+        bookmarkDto.setArticleId(updatedBookmark.getArticle().getArticleId());
+        bookmarkDto.setStatus(updatedBookmark.getStatus());
+
+        return bookmarkDto;
     }
 
 

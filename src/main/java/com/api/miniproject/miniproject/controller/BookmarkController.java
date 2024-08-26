@@ -45,4 +45,15 @@ public class BookmarkController {
         );
     }
 
+    @PutMapping("/{id}")
+    @Operation(summary = "Change status when this article is no longer your favorite")
+    public ResponseEntity<?> updateBookmark(@PathVariable("id") Long articleId){
+        return ResponseEntity.ok(
+                APIResponseUtil.apiResponse(
+                        bookmarkService.updateBookmark(articleId),
+                        HttpStatus.OK
+                )
+        );
+    }
+
 }

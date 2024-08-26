@@ -18,7 +18,6 @@ public class BookmarkDto {
     private Long articleId;
     private Boolean status;
 
-    // toEntity method
     public Bookmark toEntity(Article article, AppUser user) {
         Bookmark bookmark = new Bookmark();
         bookmark.setArticle(article);
