@@ -23,5 +23,5 @@ public class ApiResponse <T>{
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T payload;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String token;
+    private T token;
 }

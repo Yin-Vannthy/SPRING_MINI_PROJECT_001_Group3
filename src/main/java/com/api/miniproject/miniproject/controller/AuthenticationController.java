@@ -21,6 +21,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/authentication/")
 @AllArgsConstructor
@@ -33,9 +36,6 @@ public class AuthenticationController {
     private void authenticate(String username, String password) throws Exception {
         try {
             UserDetails user = appUserService.loadUserByUsername(username);
-            if (user == null) {
-                throw new CustomNotFoundException("Wrong Email");
-            }
             if (!passwordEncoder.matches(password, user.getPassword())) {
                 throw new CustomNotFoundException("Wrong Password");
             }
@@ -63,17 +63,16 @@ public class AuthenticationController {
     @Operation(summary = "Login via credentials to get token")
     @PostMapping("login")
     public ResponseEntity<?> authenticate(@Valid @RequestBody AuthRequest authRequest) throws Exception {
-        AppUser appUser = (AppUser) appUserService.loadUserByUsername(authRequest.getEmail().toLowerCase());
-
         authenticate(authRequest.getEmail().toLowerCase(), authRequest.getPassword());
         final UserDetails userDetails = appUserService.loadUserByUsername(authRequest.getEmail().toLowerCase());
         final String token = jwtService.generateToken(userDetails);
+        Map<String, String> payload = new HashMap<>();
+        payload.put("token", token);
 
         return ResponseEntity.ok(
-                APIResponseUtil.tokenResponse(
-                        appUser.toUserResponse(),
-                        HttpStatus.OK,
-                        token
+                APIResponseUtil.apiResponse(
+                        payload,
+                        HttpStatus.OK
                 )
         );
     }
