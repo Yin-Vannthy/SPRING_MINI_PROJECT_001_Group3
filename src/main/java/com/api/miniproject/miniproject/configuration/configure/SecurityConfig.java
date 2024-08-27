@@ -59,7 +59,7 @@ public class SecurityConfig {
                                         "/api/v1/article/**",
                                         "/api/v1/files-upload/**",
                                         "/api/v1/bookmark/**",
-                                        "/api/v1/comments"
+                                        "/api/v1/comments/**"
                                 ).authenticated()
                                 .anyRequest().permitAll()
                 )

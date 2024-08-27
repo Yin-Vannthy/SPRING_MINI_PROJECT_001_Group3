@@ -22,11 +22,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto getCommentById(Long commentId) {
-        Long userId = CurrentUser.getCurrentUser().getUserId();
-        Comment comment = commentRepository.getCommentById(commentId, userId);
-        if (comment == null) {
-            throw new CustomNotFoundException("Cannot find this comment!");
-        }
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new CustomNotFoundException("Cannot find this comment!")
+        );
+
         return comment.toResponse();
     }
 
