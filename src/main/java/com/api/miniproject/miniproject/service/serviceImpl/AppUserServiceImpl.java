@@ -1,7 +1,7 @@
 package com.api.miniproject.miniproject.service.serviceImpl;
 
 import com.api.miniproject.miniproject.configuration.configure.CurrentUser;
-import com.api.miniproject.miniproject.configuration.exception.CustomNotFoundException;
+import com.api.miniproject.miniproject.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.dto.UserDto;
 import com.api.miniproject.miniproject.model.entity.AppUser;
 import com.api.miniproject.miniproject.model.enums.Enums;

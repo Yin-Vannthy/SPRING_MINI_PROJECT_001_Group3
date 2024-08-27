@@ -1,7 +1,7 @@
 package com.api.miniproject.miniproject.service.serviceImpl;
 
 import com.api.miniproject.miniproject.configuration.configure.CurrentUser;
-import com.api.miniproject.miniproject.configuration.exception.CustomNotFoundException;
+import com.api.miniproject.miniproject.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.dto.ArticleDto;
 import com.api.miniproject.miniproject.model.dto.CategoryDto;
 import com.api.miniproject.miniproject.model.entity.AppUser;
@@ -74,11 +74,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(Long categoryId) {
-        Category category = categoryRepository.findByCategoryIdAndUserUserId(categoryId, currentUser().getUserId()).orElseThrow(
-                () -> new CustomNotFoundException("No category with Id : " + categoryId + " was found.")
-        );
-        categoryRepository.deleteById(category.getCategoryId());
+    public String deleteCategory(Long categoryId) {
+        categoryRepository.findByCategoryIdAndUserUserId(categoryId, currentUser().getUserId())
+                .ifPresentOrElse(
+                        c -> categoryRepository.deleteById(categoryId),
+                        () -> {
+                            throw new CustomNotFoundException("No category with Id : " + categoryId + " was found.");
+                        }
+                );
+
+        return "Category with Id: " + categoryId + " was deleted successfully.";
     }
 
     @Override

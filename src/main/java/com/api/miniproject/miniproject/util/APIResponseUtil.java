@@ -1,4 +1,4 @@
-package com.api.miniproject.miniproject.configuration.util;
+package com.api.miniproject.miniproject.util;
 
 import com.api.miniproject.miniproject.model.response.ApiResponse;
 import org.springframework.http.HttpStatus;

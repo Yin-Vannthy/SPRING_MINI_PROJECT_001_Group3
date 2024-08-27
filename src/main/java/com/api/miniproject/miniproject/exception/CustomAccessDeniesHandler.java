@@ -1,4 +1,4 @@
-package com.api.miniproject.miniproject.configuration.exception;
+package com.api.miniproject.miniproject.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

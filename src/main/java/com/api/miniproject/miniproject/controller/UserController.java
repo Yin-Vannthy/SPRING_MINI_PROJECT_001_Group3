@@ -1,6 +1,8 @@
 package com.api.miniproject.miniproject.controller;
 
-import com.api.miniproject.miniproject.configuration.util.APIResponseUtil;
+import com.api.miniproject.miniproject.model.dto.UserDto;
+import com.api.miniproject.miniproject.model.response.ApiResponse;
+import com.api.miniproject.miniproject.util.APIResponseUtil;
 import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.model.request.UserRequest;
 import com.api.miniproject.miniproject.service.AppUserService;
@@ -21,7 +23,7 @@ public class UserController {
 
     @Operation(summary = "Get current user")
     @GetMapping("getCurrentUser")
-    public ResponseEntity<?> getCurrentUser() {
+    public ResponseEntity<ApiResponse<UserDto>> getCurrentUser() {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         appUserService.getCurrentUser(),
@@ -32,7 +34,7 @@ public class UserController {
 
     @Operation(summary = "Update current user's information")
     @PutMapping("updateCurrentUser")
-    public ResponseEntity<?> updateCurrentUser(
+    public ResponseEntity<ApiResponse<UserDto>> updateCurrentUser(
             @Valid @RequestBody UserRequest userRequest,
             @RequestParam(defaultValue = "AUTHOR") Enums.Roles role
     ) {

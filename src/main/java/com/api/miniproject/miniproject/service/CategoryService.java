@@ -18,7 +18,7 @@ public interface CategoryService {
 
     List<CategoryDto> getCategories(Integer pageNo, Integer pageSize, Enums.Category sortBy, Sort.Direction sortDirection);
 
-    void deleteCategory(Long categoryId);
+    String deleteCategory(Long categoryId);
 
     Optional<Category> getCategoryByName(String categoryName);
 }

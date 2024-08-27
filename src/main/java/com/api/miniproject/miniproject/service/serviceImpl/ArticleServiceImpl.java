@@ -1,7 +1,7 @@
 package com.api.miniproject.miniproject.service.serviceImpl;
 
 import com.api.miniproject.miniproject.configuration.configure.CurrentUser;
-import com.api.miniproject.miniproject.configuration.exception.CustomNotFoundException;
+import com.api.miniproject.miniproject.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.dto.ArticleDto;
 import com.api.miniproject.miniproject.model.entity.AppUser;
 import com.api.miniproject.miniproject.model.entity.Article;
@@ -92,10 +92,12 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public void deleteArticle(Long articleId) {
+    public String deleteArticle(Long articleId) {
         articleRepository.findArticleByArticleIdAndUserUserId(articleId, currentUser().getUserId())
                 .orElseThrow(() -> new CustomNotFoundException("No article with id: " + articleId + " was found."));
         articleRepository.deleteArticleByArticleIdAndUserUserId(articleId, currentUser().getUserId());
+
+        return "Article with Id : " + articleId + " was deleted successfully.";
     }
 
     @Override

@@ -22,6 +22,4 @@ public class ApiResponse <T>{
     private final LocalDateTime localDateTime = LocalDateTime.now();
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T payload;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private T token;
 }

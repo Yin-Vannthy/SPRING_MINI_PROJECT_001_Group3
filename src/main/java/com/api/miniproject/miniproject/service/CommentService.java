@@ -13,5 +13,5 @@ public interface CommentService {
 
     CommentDto updateComment(Long commentId, @Valid CommentRequest commentRequest);
 
-    void deleteComment(Long commentId);
+    String deleteComment(Long commentId);
 }

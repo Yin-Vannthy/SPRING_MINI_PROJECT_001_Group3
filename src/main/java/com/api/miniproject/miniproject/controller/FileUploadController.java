@@ -1,7 +1,8 @@
 package com.api.miniproject.miniproject.controller;
 
+import com.api.miniproject.miniproject.model.response.ApiResponse;
 import com.api.miniproject.miniproject.service.FileUploadService;
-import com.api.miniproject.miniproject.configuration.util.APIResponseUtil;
+import com.api.miniproject.miniproject.util.APIResponseUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -24,7 +25,7 @@ public class FileUploadController {
     private final FileUploadService fileUploadService;
 
     @PostMapping(path = "/uploadFile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> uploadFile(@RequestParam("file") List<MultipartFile> files) throws IOException {
+    public ResponseEntity<ApiResponse<List<String>>> uploadFile(@RequestParam("file") List<MultipartFile> files) throws IOException {
         List<String> fileNames = new ArrayList<>();
         for (MultipartFile file : files) {
             String fileUrl = fileUploadService.uploadFile(file.getOriginalFilename(), file);
@@ -54,7 +55,7 @@ public class FileUploadController {
     }
 
     @DeleteMapping("/delete/{filename}")
-    public ResponseEntity<?> deleteFile(@PathVariable String filename) {
+    public ResponseEntity<ApiResponse<String>> deleteFile(@PathVariable String filename) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         fileUploadService.deleteFile(filename),

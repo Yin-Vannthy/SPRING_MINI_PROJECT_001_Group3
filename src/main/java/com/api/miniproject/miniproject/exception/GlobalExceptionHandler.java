@@ -1,5 +1,6 @@
-package com.api.miniproject.miniproject.configuration.exception;
+package com.api.miniproject.miniproject.exception;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -17,6 +18,28 @@ import java.util.HashMap;
 @RestControllerAdvice
 @RestController
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ProblemDetail handleException(Exception e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
+        problemDetail.setType(URI.create("about:blank"));
+        problemDetail.setTitle("Internal Server Error");
+        problemDetail.setDetail("An unexpected error occurred. Please try again later.");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(JwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ProblemDetail handleJwtException(JwtException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid token.");
+        problemDetail.setType(URI.create("about:blank"));
+        problemDetail.setTitle("Unauthorized");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({CustomNotFoundException.class})

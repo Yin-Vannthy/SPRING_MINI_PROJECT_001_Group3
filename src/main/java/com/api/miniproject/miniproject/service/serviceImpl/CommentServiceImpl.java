@@ -1,7 +1,7 @@
 package com.api.miniproject.miniproject.service.serviceImpl;
 
 import com.api.miniproject.miniproject.configuration.configure.CurrentUser;
-import com.api.miniproject.miniproject.configuration.exception.CustomNotFoundException;
+import com.api.miniproject.miniproject.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.dto.CommentDto;
 import com.api.miniproject.miniproject.model.entity.AppUser;
 import com.api.miniproject.miniproject.model.entity.Article;
@@ -47,10 +47,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(Long commentId) {
+    public String deleteComment(Long commentId) {
         commentRepository
                 .findCommentByCommentIdAndUserUserId(commentId, currentUser().getUserId())
                 .orElseThrow(() -> new CustomNotFoundException("You are not the owner of the comment with Id : " + commentId));
         commentRepository.deleteById(commentId);
+
+        return "Comment with Id : " + commentId + " was deleted successfully.";
     }
 }

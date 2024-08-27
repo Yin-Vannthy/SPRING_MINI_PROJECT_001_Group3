@@ -18,7 +18,7 @@ public interface ArticleService {
 
     List<ArticleDto> findArticlesByCategoryCategoryId(Long categoryId);
 
-    void deleteArticle(Long articleId);
+    String deleteArticle(Long articleId);
 
     ArticleDto updateArticle(Long articleId, ArticleRequest articleRequest);
 

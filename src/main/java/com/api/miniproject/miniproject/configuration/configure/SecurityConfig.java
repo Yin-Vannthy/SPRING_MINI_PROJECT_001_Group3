@@ -1,6 +1,6 @@
 package com.api.miniproject.miniproject.configuration.configure;
 
-import com.api.miniproject.miniproject.configuration.exception.CustomAccessDeniesHandler;
+import com.api.miniproject.miniproject.exception.CustomAccessDeniesHandler;
 import com.api.miniproject.miniproject.configuration.security.JwtAuthEntrypoint;
 import com.api.miniproject.miniproject.configuration.security.JwtAuthFilter;
 import com.api.miniproject.miniproject.service.serviceImpl.AppUserServiceImpl;
