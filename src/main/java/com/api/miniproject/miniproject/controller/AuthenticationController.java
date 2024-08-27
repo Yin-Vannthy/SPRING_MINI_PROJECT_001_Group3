@@ -1,10 +1,12 @@
 package com.api.miniproject.miniproject.controller;
 
 import com.api.miniproject.miniproject.exception.CustomNotFoundException;
+import com.api.miniproject.miniproject.model.dto.UserDto;
 import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.model.request.AuthRequest;
 import com.api.miniproject.miniproject.model.request.UserRequest;
 import com.api.miniproject.miniproject.configuration.security.JwtService;
+import com.api.miniproject.miniproject.model.response.ApiResponse;
 import com.api.miniproject.miniproject.service.AppUserService;
 import com.api.miniproject.miniproject.configuration.util.APIResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,13 +18,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import com.api.miniproject.miniproject.model.entity.AppUser;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/v1/authentication/")
@@ -49,7 +49,7 @@ public class AuthenticationController {
 
     @Operation(summary = "Register as a new user")
     @PostMapping("register")
-    public ResponseEntity<?> saveUser(
+    public ResponseEntity<ApiResponse<UserDto>> saveUser(
             @Valid @RequestBody UserRequest userRequest,
             @RequestParam(defaultValue = "AUTHOR") Enums.Roles role) {
         return ResponseEntity.ok(
@@ -62,17 +62,15 @@ public class AuthenticationController {
 
     @Operation(summary = "Login via credentials to get token")
     @PostMapping("login")
-    public ResponseEntity<?> authenticate(@Valid @RequestBody AuthRequest authRequest) throws Exception {
+    public ResponseEntity<ApiResponse<?>> authenticate(@Valid @RequestBody AuthRequest authRequest) throws Exception {
         authenticate(authRequest.getEmail().toLowerCase(), authRequest.getPassword());
         final UserDetails userDetails = appUserService.loadUserByUsername(authRequest.getEmail().toLowerCase());
         final String token = jwtService.generateToken(userDetails);
-        Map<String, String> payload = new HashMap<>();
-        payload.put("token", token);
 
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
-                        payload,
-                        HttpStatus.OK
+                        Collections.singletonMap("token", token),
+                        HttpStatus.CONTINUE
                 )
         );
     }

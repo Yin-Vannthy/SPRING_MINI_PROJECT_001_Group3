@@ -1,9 +1,11 @@
 package com.api.miniproject.miniproject.controller;
 
 import com.api.miniproject.miniproject.configuration.util.APIResponseUtil;
+import com.api.miniproject.miniproject.model.dto.ArticleDto;
 import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.model.request.ArticleRequest;
 import com.api.miniproject.miniproject.model.request.CommentRequest;
+import com.api.miniproject.miniproject.model.response.ApiResponse;
 import com.api.miniproject.miniproject.service.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -14,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/v1/")
@@ -23,7 +27,7 @@ public class ArticleController {
 
     @Operation(summary = "Create an article")
     @PostMapping("author/article/createArticle")
-    public ResponseEntity<?> createArticle(@Valid @RequestBody ArticleRequest articleRequest) {
+    public ResponseEntity<ApiResponse<ArticleDto>> createArticle(@Valid @RequestBody ArticleRequest articleRequest) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         articleService.createArticle(articleRequest),
@@ -34,7 +38,7 @@ public class ArticleController {
 
     @Operation(summary = "Get an article by Id")
     @GetMapping("article/{articleId}")
-    public ResponseEntity<?> getArticle(@PathVariable Long articleId) {
+    public ResponseEntity<ApiResponse<ArticleDto>> getArticle(@PathVariable Long articleId) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         articleService.getArticle(articleId),
@@ -45,7 +49,7 @@ public class ArticleController {
 
     @Operation(summary = "Delete an article by Id")
     @DeleteMapping("author/article/{articleId}")
-    public ResponseEntity<?> deleteArticle(@PathVariable Long articleId) {
+    public ResponseEntity<ApiResponse<?>> deleteArticle(@PathVariable Long articleId) {
         articleService.deleteArticle(articleId);
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
@@ -57,7 +61,7 @@ public class ArticleController {
 
     @Operation(summary = "Update an article by Id")
     @PutMapping("author/article/{articleId}")
-    public ResponseEntity<?> updateArticle(@PathVariable Long articleId, @Valid @RequestBody ArticleRequest articleRequest) {
+    public ResponseEntity<ApiResponse<ArticleDto>> updateArticle(@PathVariable Long articleId, @Valid @RequestBody ArticleRequest articleRequest) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         articleService.updateArticle(articleId, articleRequest),
@@ -68,7 +72,7 @@ public class ArticleController {
 
     @Operation(summary = "Get all articles")
     @GetMapping("article/all")
-    public ResponseEntity<?> getAllArticles(
+    public ResponseEntity<ApiResponse<List<ArticleDto>>> getAllArticles(
             @RequestParam(defaultValue = "0", required = false) Integer pageNo,
             @RequestParam(defaultValue = "10", required = false) Integer pageSize,
             @RequestParam(defaultValue = "articleId", required = false) Enums.Article sortBy,
@@ -84,7 +88,7 @@ public class ArticleController {
 
     @Operation(summary = "Create a comment on an article via its Id")
     @PostMapping("article/{articleId}/comment")
-    public ResponseEntity<?> createComment(@PathVariable Long articleId, @Valid @RequestBody CommentRequest commentRequest) {
+    public ResponseEntity<ApiResponse<ArticleDto>> createComment(@PathVariable Long articleId, @Valid @RequestBody CommentRequest commentRequest) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         articleService.createComment(articleId, commentRequest),
@@ -95,7 +99,7 @@ public class ArticleController {
 
     @Operation(summary = "Get comments on an article via its Id")
     @GetMapping("article/{articleId}/comment")
-    public ResponseEntity<?> getComments(@PathVariable Long articleId) {
+    public ResponseEntity<ApiResponse<ArticleDto>> getComments(@PathVariable Long articleId) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         articleService.getComments(articleId),

@@ -30,15 +30,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteCommentById(Long commentId) {
+    public String deleteCommentById(Long commentId) {
         Long userId = CurrentUser.getCurrentUser().getUserId();
         Comment comment = commentRepository.getCommentById(commentId, userId);
         if (comment == null) {
             throw new CustomNotFoundException("Cannot find this comment!");
         }
-        System.out.println(comment);
         commentRepository.delete(comment);
-        System.out.println(comment);
+        return "Comment with Id : " + commentId + " was deleted successfully";
     }
 
     @Override

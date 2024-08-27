@@ -33,3 +33,5 @@ aws:
 
 server:
   port: 8080
+  error:
+    include-stacktrace:

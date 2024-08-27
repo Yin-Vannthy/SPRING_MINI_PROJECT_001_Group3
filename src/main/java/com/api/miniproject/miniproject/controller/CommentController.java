@@ -1,5 +1,6 @@
 package com.api.miniproject.miniproject.controller;
 
+import com.api.miniproject.miniproject.configuration.util.APIResponseUtil;
 import com.api.miniproject.miniproject.model.request.CommentRequest;
 import com.api.miniproject.miniproject.model.response.ApiResponse;
 import com.api.miniproject.miniproject.model.dto.CommentDto;
@@ -19,63 +20,32 @@ public class CommentController {
 
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<CommentDto>> getCommentById(@PathVariable Long id) {
-        CommentDto commentDto = commentService.getCommentById(id);
-        return ResponseEntity.ok(ApiResponse
-                .<CommentDto>builder()
-                .status(HttpStatus.OK)
-                .code(200)
-                .payload(commentDto)
-                .build()
+
+        return ResponseEntity.ok(
+                APIResponseUtil.apiResponse(
+                        commentService.getCommentById(id),
+                        HttpStatus.OK
+                )
         );
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteCommentById(@PathVariable Long id) {
-        commentService.deleteCommentById(id);
-        return ResponseEntity.ok(ApiResponse
-                .builder()
-                .status(HttpStatus.OK)
-                .code(200)
-                .payload(null)
-                .build()
+    public ResponseEntity<ApiResponse<String>> deleteCommentById(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                APIResponseUtil.apiResponse(
+                        commentService.deleteCommentById(id),
+                        HttpStatus.OK
+                )
         );
     }
 
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse<CommentDto>> updateCommentById(@PathVariable Long id, @RequestBody CommentRequest commentRequest){
-        CommentDto commentDto = commentService.updateCommentById(id, commentRequest);
-        return ResponseEntity.ok(ApiResponse
-                .<CommentDto>builder()
-                .status(HttpStatus.OK)
-                .code(200)
-                .payload(commentDto)
-                .build()
+        return ResponseEntity.ok(
+                APIResponseUtil.apiResponse(
+                        commentService.updateCommentById(id, commentRequest),
+                        HttpStatus.OK
+                )
         );
     }
-
-
-
-    /*
-    -----------------------------------------------------------------
-
-      "message": "Get comment id 5 successfully.",
-      "status": "OK",
-      "payload": {
-        "commentId": 5,
-        "comment": "I am an alien",
-        "createdAt": "2024-08-25T16:46:44.771843",
-        "user": {
-          "userId": 25,
-          "username": "Aurora",
-          "email": "aurora@gmail.com",
-          "address": "Mars",
-          "phoneNumber": "098 899 876",
-          "createdAt": "2024-08-25T16:25:06.395616",
-          "role": "AUTHOR"
-        }
-      }
-    }
-
-    -----------------------------------------------------------------
-    * */
 }
