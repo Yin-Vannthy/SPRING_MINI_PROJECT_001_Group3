@@ -151,18 +151,16 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleDto> findAllArticlesByBookmark(Pageable pageable, Long userId) {
-        return articleRepository.findAllArticlesByBookmark(pageable, userId).getContent()
-                .stream()
-                .map(Article::toArticleResponseWithRelatedData).toList();
-    }
-
-    @Override
     public ArticleDto getComments(Long articleId) {
         ArticleDto article = getArticle(articleId);
         if (article.getCommentList().isEmpty())
             throw new CustomNotFoundException("No comment found for article with Id : " + articleId + " was found.");
 
         return article;
+    }
+
+    @Override
+    public List<Article> findAllByUserId(Pageable pageable, Long userId) {
+        return articleRepository.findArticleByUserUserId(pageable, userId).getContent();
     }
 }

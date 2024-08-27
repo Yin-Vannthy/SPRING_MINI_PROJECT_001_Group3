@@ -4,6 +4,7 @@ import com.api.miniproject.miniproject.configuration.configure.CurrentUser;
 import com.api.miniproject.miniproject.configuration.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.dto.ArticleDto;
 import com.api.miniproject.miniproject.model.entity.AppUser;
+import com.api.miniproject.miniproject.model.entity.Article;
 import com.api.miniproject.miniproject.model.entity.Bookmark;
 import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.repository.BookmarkRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -52,7 +54,11 @@ public class BookmarkServiceImpl implements BookmarkService {
     public List<ArticleDto> getBookmarks(Integer pageNo, Integer pageSize, Enums.Article sortBy, Sort.Direction sortDirection) {
         Sort sort = Sort.by(sortDirection, sortBy.name());
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        List<Article> articles = articleService.findAllByUserId(pageable, currentUser().getUserId());
 
-        return articleService.findAllArticlesByBookmark(pageable, currentUser().getUserId());
+        return articles.stream()
+                .filter(article -> article.getBookmarks().stream().anyMatch(Bookmark::getStatus))
+                .map(Article::toArticleResponseWithRelatedData)
+                .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package com.api.miniproject.miniproject.service;
 
 import com.api.miniproject.miniproject.model.dto.ArticleDto;
+import com.api.miniproject.miniproject.model.entity.Article;
 import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.model.request.ArticleRequest;
 import com.api.miniproject.miniproject.model.request.CommentRequest;
@@ -25,7 +26,7 @@ public interface ArticleService {
 
     ArticleDto createComment(Long articleId, @Valid CommentRequest commentRequest);
 
-    List<ArticleDto> findAllArticlesByBookmark(Pageable pageable, Long userId);
-
     ArticleDto getComments(Long articleId);
+
+    List<Article> findAllByUserId(Pageable pageable, Long userId);
 }
