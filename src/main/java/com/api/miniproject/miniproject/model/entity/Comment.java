@@ -3,6 +3,7 @@ package com.api.miniproject.miniproject.model.entity;
 import com.api.miniproject.miniproject.model.dto.CommentDto;
 import com.api.miniproject.miniproject.model.dto.UserDto;
 import com.api.miniproject.miniproject.model.request.CommentRequest;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +47,6 @@ public class Comment {
 
     public CommentDto toResponse(){
         UserDto userDto = user.toUserResponse();
-        return new CommentDto(commentId, cmt, createdAt, userDto);
+        return new CommentDto(commentId, cmt, createdAt, updatedAt, userDto);
     }
 }
