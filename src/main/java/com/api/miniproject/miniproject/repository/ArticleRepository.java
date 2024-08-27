@@ -1,6 +1,9 @@
 package com.api.miniproject.miniproject.repository;
 
+import com.api.miniproject.miniproject.model.entity.AppUser;
 import com.api.miniproject.miniproject.model.entity.Article;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +28,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Optional<Article> findArticleByArticleIdAndUserUserId(Long articleId, Long userId);
 
     void deleteArticleByArticleIdAndUserUserId(Long articleId, Long userId);
+
+    Page<Article> findAllByUserUserId(Pageable pageable, AppUser user);
 }

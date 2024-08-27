@@ -38,7 +38,10 @@ public class BookmarkServiceImpl implements BookmarkService {
         Sort sort = Sort.by(sortDirection, sortBy.name());
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        Page<Article> articles = articleRepository.findAll(pageable);
+        AppUser appUser = appUserRepository.findById(CurrentUser.getCurrentUser().getUserId())
+                .orElseThrow(() -> new CustomNotFoundException("Invalid user ID"));
+
+        Page<Article> articles = articleRepository.findAllByUserUserId(pageable, appUser);
 
         return articles.getContent().stream()
                 .filter(article -> article.getBookmarks().stream().anyMatch(Bookmark::getStatus))
