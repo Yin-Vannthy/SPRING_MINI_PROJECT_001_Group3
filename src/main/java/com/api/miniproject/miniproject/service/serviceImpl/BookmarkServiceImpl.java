@@ -7,6 +7,7 @@ import com.api.miniproject.miniproject.model.dto.BookmarkDto;
 import com.api.miniproject.miniproject.model.entity.AppUser;
 import com.api.miniproject.miniproject.model.entity.Article;
 import com.api.miniproject.miniproject.model.entity.Bookmark;
+import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.repository.ArticleRepository;
 import com.api.miniproject.miniproject.repository.BookmarkRepository;
 import com.api.miniproject.miniproject.repository.UserRepository;
@@ -33,10 +34,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 
 
     @Override
-    public List<ArticleDto> getBookmarks(Integer pageNo, Integer pageSize, String sortBy, String sortDirection) {
-        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name())
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
+    public List<ArticleDto> getBookmarks(Integer pageNo, Integer pageSize, Enums.Article sortBy, Sort.Direction sortDirection) {
+        Sort sort = Sort.by(sortDirection, sortBy.name());
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
         Page<Article> articles = articleRepository.findAll(pageable);
