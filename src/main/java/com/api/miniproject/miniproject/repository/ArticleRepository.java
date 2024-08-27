@@ -29,5 +29,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     Optional<Article> findArticleByTitleAndUserUserId(String title, Long userId);
 
-    Page<Article> findAllByUserUserIdAnd(Pageable pageable, Long userId);
+    Page<Article> findAllByUserUserId(Pageable pageable, Long userId);
 }
