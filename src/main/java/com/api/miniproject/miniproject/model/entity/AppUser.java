@@ -1,7 +1,6 @@
 package com.api.miniproject.miniproject.model.entity;
 
 import com.api.miniproject.miniproject.model.dto.UserDto;
-import com.api.miniproject.miniproject.model.enums.Enums;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,13 +27,13 @@ public class AppUser implements UserDetails {
     private String phoneNumber;
     private String email;
     private String password;
-    private Enums.Roles role;
+    private String role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE" + role.name()));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override
@@ -67,7 +66,7 @@ public class AppUser implements UserDetails {
         return true;
     }
 
-    public AppUser(Long userId, String username, String address, String phoneNumber, String email, String password, Enums.Roles role, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public AppUser(Long userId, String username, String address, String phoneNumber, String email, String password, String role, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.userId = userId;
         this.username = username;
         this.address = address;

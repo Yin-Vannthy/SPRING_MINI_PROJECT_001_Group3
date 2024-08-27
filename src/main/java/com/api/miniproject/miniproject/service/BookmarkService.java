@@ -10,7 +10,6 @@ public interface BookmarkService {
 
     List<ArticleDto> getBookmarks(Integer pageNo, Integer pageSize, Enums.Article sortBy, Sort.Direction sortDirection);
 
-
     String postBookmark(Long articleId);
 
     String updateBookmark(Long articleId);

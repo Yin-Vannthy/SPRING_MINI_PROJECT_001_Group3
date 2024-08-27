@@ -20,27 +20,31 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long articleId;
+
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private AppUser user;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryArticle> categoriesArticles = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "article", orphanRemoval = true)
-    private List<Comment> comments;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "article")
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "article")
     private List<Bookmark> bookmarks;
 
     public Article(ArticleRequest articleRequest, AppUser user) {
-        this.title = articleRequest.getTitle();
-        this.description = articleRequest.getDescription();
+        this.title = articleRequest.getTitle().trim();
+        this.description = articleRequest.getDescription().trim();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = null;
         this.user = user;
@@ -55,7 +59,15 @@ public class Article {
         this.user = user;
     }
 
-    public ArticleDto toArticleResponseWithCategoryIds() {
+    public Article(Long articleId, String title, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.articleId = articleId;
+        this.title = title;
+        this.description = description;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public ArticleDto toArticleResponseWithRelatedData() {
         return new ArticleDto(
                 this.articleId,
                 this.title,
@@ -65,6 +77,7 @@ public class Article {
                 this.user,
                 this.categoriesArticles.stream()
                         .map(c -> c.getCategory().toCategoryResponse().getCategoryId())
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()),
+                this.comments.stream().map(Comment::toCommentResponse).toList());
     }
 }

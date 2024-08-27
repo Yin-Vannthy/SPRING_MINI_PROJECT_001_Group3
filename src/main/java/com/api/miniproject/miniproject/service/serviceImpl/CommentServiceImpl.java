@@ -3,6 +3,8 @@ package com.api.miniproject.miniproject.service.serviceImpl;
 import com.api.miniproject.miniproject.configuration.configure.CurrentUser;
 import com.api.miniproject.miniproject.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.dto.CommentDto;
+import com.api.miniproject.miniproject.model.entity.AppUser;
+import com.api.miniproject.miniproject.model.entity.Article;
 import com.api.miniproject.miniproject.model.entity.Comment;
 import com.api.miniproject.miniproject.model.request.CommentRequest;
 import com.api.miniproject.miniproject.repository.CommentRepository;
@@ -53,6 +55,11 @@ public class CommentServiceImpl implements CommentService {
         commentToUpdate.setUpdatedAt(LocalDateTime.now());
         return commentRepository.save(commentToUpdate).toResponse();
 
+    }
+
+    @Override
+    public void createComment(CommentRequest commentRequest, Article article, AppUser appUser) {
+        commentRepository.save(new Comment(commentRequest, article, appUser)).toCommentResponse();
     }
 
 }

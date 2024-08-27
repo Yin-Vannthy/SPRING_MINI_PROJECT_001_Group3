@@ -31,8 +31,6 @@ public class BookmarkServiceImpl implements BookmarkService {
     private final ArticleRepository articleRepository;
     private final BookmarkRepository bookmarkRepository;
 
-
-
     @Override
     public List<ArticleDto> getBookmarks(Integer pageNo, Integer pageSize, Enums.Article sortBy, Sort.Direction sortDirection) {
         Sort sort = Sort.by(sortDirection, sortBy.name());
@@ -42,7 +40,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
         return articles.getContent().stream()
                 .filter(article -> article.getBookmarks().stream().anyMatch(Bookmark::getStatus))
-                .map(Article::toArticleResponseWithCategoryIds)
+                .map(Article::toArticleResponseWithRelatedData)
                 .collect(Collectors.toList());
     }
 
@@ -90,8 +88,6 @@ public class BookmarkServiceImpl implements BookmarkService {
         return "An article id " + articleId + " is bookmarked successfully.";
     }
 
-
-
     @Override
     public String updateBookmark(Long articleId) {
         // Fetch the current user's ID
@@ -112,7 +108,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         // Check if the current status is false (inactive)
         if (!bookmark.getStatus()) {
             // If the bookmark is already inactive, return without making any changes
-            return "An Article id "+articleId+" is already unmark.";
+            return "An Article id " + articleId + " is already unmark.";
         }
 
         // If the bookmark is active, change its status to inactive (false)
@@ -123,10 +119,6 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmarkRepository.save(bookmark);
 
         // Return success message
-        return "An article id "+articleId+" is unmarked successfully.";
+        return "An article id " + articleId + " is unmarked successfully.";
     }
-
-
-
-
 }

@@ -11,8 +11,6 @@ import java.util.Optional;
 
 public interface AppUserService extends UserDetailsService {
 
-    Optional<AppUser> getUserById(Long userId);
-
     UserDto saveUser(UserRequest userRequest, Enums.Roles role);
 
     UserDto getCurrentUser();

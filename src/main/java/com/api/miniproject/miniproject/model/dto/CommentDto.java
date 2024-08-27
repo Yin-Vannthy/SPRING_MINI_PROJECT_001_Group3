@@ -15,8 +15,24 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommentDto {
     private Long commentId;
-    private String cmt;
+    private String comment;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private UserDto user;
+
+    public CommentDto(Long commentId, String cmt, LocalDateTime createdAt, LocalDateTime updatedAt, AppUser user) {
+        this.commentId = commentId;
+        this.comment = cmt;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.user = user.toUserResponse();
+    }
+
+    public CommentDto(Long commentId, String cmt, LocalDateTime createdAt, UserDto userDto) {
+        this.commentId = commentId;
+        this.comment = cmt;
+        this.createdAt = createdAt;
+        this.user = userDto;
+    }
 }

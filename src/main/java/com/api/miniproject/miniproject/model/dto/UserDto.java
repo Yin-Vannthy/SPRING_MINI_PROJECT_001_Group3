@@ -1,6 +1,5 @@
 package com.api.miniproject.miniproject.model.dto;
 
-import com.api.miniproject.miniproject.model.enums.Enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -15,7 +14,7 @@ public class UserDto {
     private String address;
     private String phoneNumber;
     private String email;
-    private Enums.Roles role;
+    private String role;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
@@ -23,7 +22,7 @@ public class UserDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
 
-    public UserDto(Long userId, String username, String phoneNumber, String address, String email, Enums.Roles role, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserDto(Long userId, String username, String phoneNumber, String address, String email, String role, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.userId = userId;
         this.username = username;
         this.address = address;

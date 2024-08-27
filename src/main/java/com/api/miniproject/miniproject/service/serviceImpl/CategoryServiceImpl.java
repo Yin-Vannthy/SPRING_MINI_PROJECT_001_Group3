@@ -25,7 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final ArticleService articleService;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository,@Lazy ArticleService articleService) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, @Lazy ArticleService articleService) {
         this.categoryRepository = categoryRepository;
         this.articleService = articleService;
     }
@@ -36,29 +36,27 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto createCategory(CategoryRequest categoryRequest) {
-        getCategoryByName(categoryRequest.getCategoryName()).ifPresent(category -> {
-            throw new CustomNotFoundException("Category with name : " + categoryRequest.getCategoryName() + " is already in use.");
-        });
+        if (getCategoryByName(categoryRequest.getCategoryName().trim()).isPresent()) {
+            throw new CustomNotFoundException("Category with name: " + categoryRequest.getCategoryName().trim() + " is already in use.");
+        }
         return categoryRepository.save(categoryRequest.toCategoryEntity(currentUser())).toCategoryResponse();
     }
 
     @Override
     public CategoryDto getCategory(Long categoryId) {
         Category category = categoryRepository.findByCategoryIdAndUserUserId(categoryId, currentUser().getUserId())
-                .orElseThrow(() -> new CustomNotFoundException("No category with Id : " + categoryId + " found."));
+                .orElseThrow(() -> new CustomNotFoundException("No category with Id : " + categoryId + " was found."));
         return category.toCategoryResponse(getArticlesByCategoryId(categoryId));
-       }
+    }
 
     @Override
     public CategoryDto updateCategory(CategoryRequest categoryRequest, Long categoryId) {
-        getCategoryByName(categoryRequest.getCategoryName()).ifPresent(category -> {
-            if (!category.getCategoryId().equals(categoryId)) {
-                throw new CustomNotFoundException("Category with name : " + categoryRequest.getCategoryName() + " is already in use.");
-            }
-        });
-
         Category category = categoryRepository.findByCategoryIdAndUserUserId(categoryId, currentUser().getUserId())
-                .orElseThrow(() -> new CustomNotFoundException("No category with Id : " + categoryId + " found."));
+                .orElseThrow(() -> new CustomNotFoundException("No category with Id : " + categoryId + " was found."));
+
+        if (getCategoryByName(categoryRequest.getCategoryName().trim()).isPresent() && !category.getCategoryId().equals(categoryId)) {
+            throw new CustomNotFoundException("Category with name: " + categoryRequest.getCategoryName().trim() + " is already in use.");
+        }
 
         category.updateCategoryEntity(categoryRequest, currentUser());
 
@@ -78,17 +76,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(Long categoryId) {
         Category category = categoryRepository.findByCategoryIdAndUserUserId(categoryId, currentUser().getUserId()).orElseThrow(
-                () -> new CustomNotFoundException("No category with Id : " + categoryId + " found.")
+                () -> new CustomNotFoundException("No category with Id : " + categoryId + " was found.")
         );
         categoryRepository.deleteById(category.getCategoryId());
     }
 
     @Override
     public Optional<Category> getCategoryByName(String categoryName) {
-        return categoryRepository.findByNameAndUserUserId(categoryName, currentUser().getUserId());
+        return categoryRepository.findByNameIgnoreCaseAndUserUserId(categoryName, currentUser().getUserId());
     }
 
     private List<ArticleDto> getArticlesByCategoryId(Long categoryId) {
-       return articleService.findArticlesByCategoryCategoryId(categoryId);
+        return articleService.findArticlesByCategoryCategoryId(categoryId);
     }
 }

@@ -3,6 +3,7 @@ package com.api.miniproject.miniproject.controller;
 import com.api.miniproject.miniproject.configuration.util.APIResponseUtil;
 import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.model.request.ArticleRequest;
+import com.api.miniproject.miniproject.model.request.CommentRequest;
 import com.api.miniproject.miniproject.service.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -69,13 +70,35 @@ public class ArticleController {
     @GetMapping("article/all")
     public ResponseEntity<?> getAllArticles(
             @RequestParam(defaultValue = "0", required = false) Integer pageNo,
-            @RequestParam(defaultValue = "5", required = false) Integer pageSize,
+            @RequestParam(defaultValue = "10", required = false) Integer pageSize,
             @RequestParam(defaultValue = "articleId", required = false) Enums.Article sortBy,
             @RequestParam(defaultValue = "DESC", required = false) Sort.Direction sortDirection
     ) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         articleService.getAllArticles(pageNo, pageSize, sortBy, sortDirection),
+                        HttpStatus.OK
+                )
+        );
+    }
+
+    @Operation(summary = "Create a comment on an article via its Id")
+    @PostMapping("article/{articleId}/comment")
+    public ResponseEntity<?> createComment(@PathVariable Long articleId, @Valid @RequestBody CommentRequest commentRequest) {
+        return ResponseEntity.ok(
+                APIResponseUtil.apiResponse(
+                        articleService.createComment(articleId, commentRequest),
+                        HttpStatus.CREATED
+                )
+        );
+    }
+
+    @Operation(summary = "Get comments on an article via its Id")
+    @GetMapping("article/{articleId}/comment")
+    public ResponseEntity<?> getComments(@PathVariable Long articleId) {
+        return ResponseEntity.ok(
+                APIResponseUtil.apiResponse(
+                        articleService.getComments(articleId),
                         HttpStatus.OK
                 )
         );

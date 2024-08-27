@@ -60,7 +60,7 @@ public class Category {
     }
 
     public void updateCategoryEntity(CategoryRequest categoryRequest, AppUser user) {
-        this.name = categoryRequest.getCategoryName();
+        this.name = categoryRequest.getCategoryName().trim();
         this.updatedAt = LocalDateTime.now();
         this.user = user;
     }
