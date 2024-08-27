@@ -20,11 +20,11 @@ public class Bookmark {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.REMOVE, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "article_id", referencedColumnName = "articleId")
     private Article article;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.REMOVE, CascadeType.MERGE})
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private AppUser user;
 }

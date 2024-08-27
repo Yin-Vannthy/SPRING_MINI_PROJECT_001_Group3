@@ -13,14 +13,12 @@ import java.util.Optional;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
-    @Query(
-            value = """
-                        SELECT a FROM Article a JOIN CategoryArticle ca
-                                   ON a.articleId = ca.article.articleId
-                                   JOIN Category c ON ca.category.categoryId = c.categoryId
-                        WHERE c.categoryId = :categoryId
-                    """
-    )
+    @Query("""
+        SELECT a FROM Article a JOIN CategoryArticle ca
+                   ON a.articleId = ca.article.articleId
+                   JOIN Category c ON ca.category.categoryId = c.categoryId
+        WHERE c.categoryId = :categoryId
+    """)
     List<Article> findArticlesByCategoryCategoryId(@Param("categoryId") Long categoryId);
 
     Optional<Article> findArticleByArticleIdAndUserUserId(Long articleId, Long userId);
@@ -29,5 +27,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     Optional<Article> findArticleByTitleAndUserUserId(String title, Long userId);
 
-    Page<Article> findAllByUserUserId(Pageable pageable, Long userId);
+    @Query("""
+        SELECT a FROM Article a JOIN Bookmark b ON b.article.articleId = a.articleId
+        WHERE b.user.userId = :userId AND b.status = TRUE
+    """)
+    Page<Article> findArticlesByUserId(@Param("userId") Long userId, Pageable pageable);
 }

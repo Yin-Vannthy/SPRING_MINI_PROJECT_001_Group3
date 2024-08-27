@@ -13,7 +13,6 @@ import com.api.miniproject.miniproject.repository.BookmarkRepository;
 import com.api.miniproject.miniproject.repository.UserRepository;
 import com.api.miniproject.miniproject.service.BookmarkService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -36,10 +35,10 @@ public class BookmarkServiceImpl implements BookmarkService {
         Sort sort = Sort.by(sortDirection, sortBy.name());
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        Page<Article> articles = articleRepository.findAllByUserUserId(pageable, CurrentUser.getCurrentUser().getUserId());
-
-        return articles.getContent().stream()
-                .filter(article -> article.getBookmarks().stream().anyMatch(Bookmark::getStatus))
+        return articleRepository
+                .findArticlesByUserId(CurrentUser.getCurrentUser().getUserId(), pageable)
+                .getContent()
+                .stream()
                 .map(Article::toArticleResponseWithRelatedData)
                 .collect(Collectors.toList());
     }
@@ -105,20 +104,13 @@ public class BookmarkServiceImpl implements BookmarkService {
         Bookmark bookmark = bookmarkRepository.findByArticleAndUser(article, appUser)
                 .orElseThrow(() -> new CustomNotFoundException("Bookmark does not exist for this article and user."));
 
-        // Check if the current status is false (inactive)
-        if (!bookmark.getStatus()) {
-            // If the bookmark is already inactive, return without making any changes
-            return "An Article id " + articleId + " is already unmark.";
-        }
-
         // If the bookmark is active, change its status to inactive (false)
-        bookmark.setStatus(false);
+        bookmark.setStatus(!bookmark.getStatus());
         bookmark.setUpdatedAt(LocalDateTime.now());
 
         // Save the updated bookmark
-        bookmarkRepository.save(bookmark);
-
-        // Return success message
-        return "An article id " + articleId + " is unmarked successfully.";
+        return  bookmarkRepository.save(bookmark).getStatus() ?
+                "An article id " + articleId + " is bookmarked successfully." :
+                "An article id " + articleId + " is unmarked successfully.";
     }
 }

@@ -1,7 +1,6 @@
 package com.api.miniproject.miniproject.model.dto;
 
 import com.api.miniproject.miniproject.model.entity.AppUser;
-import com.api.miniproject.miniproject.model.entity.Article;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -41,9 +40,5 @@ public class ArticleDto {
         this.ownerOfArticle = user.getUserId();
         this.categoryIdList = categoryIds;
         this.commentList = comments;
-    }
-
-    public Article toArticleEntity(){
-        return new Article(this.articleId, this.title, this.description, this.createdAt, this.updatedAt);
     }
 }
