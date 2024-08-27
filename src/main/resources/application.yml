@@ -16,7 +16,7 @@ spring:
       max-file-size: 200MB
       max-request-size: 215MB
   profiles:
-    active: prod
+    active: dev
 aws:
   access:
     key: AKIAYS2NW5TIFDA7LPE5
