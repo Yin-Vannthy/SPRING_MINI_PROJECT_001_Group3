@@ -5,6 +5,7 @@ import com.api.miniproject.miniproject.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.dto.UserDto;
 import com.api.miniproject.miniproject.model.entity.AppUser;
 import com.api.miniproject.miniproject.model.enums.Enums;
+import com.api.miniproject.miniproject.model.request.PasswordRequest;
 import com.api.miniproject.miniproject.model.request.UserRequest;
 import com.api.miniproject.miniproject.repository.UserRepository;
 import com.api.miniproject.miniproject.service.AppUserService;
@@ -58,6 +59,24 @@ public class AppUserServiceImpl implements AppUserService {
         return userRepository
                 .save(userRequest.toUserEntity(user.getCreatedAt() ,CurrentUser.getCurrentUser().getUserId(), role.name(), passwordEncoder.encode(userRequest.getPassword().trim())))
                 .toUserResponse();
+    }
+
+    @Override
+    public UserDto forgetPassword(PasswordRequest passwordRequest) {
+        AppUser appUser = userRepository.findByEmail(passwordRequest.getEmail().toLowerCase().trim())
+                .orElseThrow(() -> new CustomNotFoundException("No user found with email " + passwordRequest.getEmail().toLowerCase().trim()));
+
+        if (!passwordRequest.getPassword().trim().equals(passwordRequest.getConfirmPassword().trim())) {
+            throw new CustomNotFoundException("Confirm Passwords don't match");
+        }
+
+        if (passwordEncoder.matches(passwordRequest.getPassword().trim(), appUser.getPassword())) {
+            throw new CustomNotFoundException("New password can not be the same as old password");
+        }
+
+        appUser.setPassword(passwordEncoder.encode(passwordRequest.getPassword().trim()));
+
+        return userRepository.save(appUser).toUserResponse();
     }
 
 }

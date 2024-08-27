@@ -74,11 +74,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(Long categoryId) {
+    public String deleteCategory(Long categoryId) {
         Category category = categoryRepository.findByCategoryIdAndUserUserId(categoryId, currentUser().getUserId()).orElseThrow(
                 () -> new CustomNotFoundException("No category with Id : " + categoryId + " was found.")
         );
         categoryRepository.deleteById(category.getCategoryId());
+
+        return "Category with Id : " + categoryId + " was deleted successfully";
     }
 
     @Override

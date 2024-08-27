@@ -6,6 +6,7 @@ import com.api.miniproject.miniproject.model.response.ApiResponse;
 import com.api.miniproject.miniproject.model.dto.CommentDto;
 import com.api.miniproject.miniproject.service.CommentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<CommentDto>> getCommentById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<CommentDto>> getCommentById(@PathVariable @Min(1) Long id) {
 
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
@@ -30,7 +31,7 @@ public class CommentController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<ApiResponse<String>> deleteCommentById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<String>> deleteCommentById(@PathVariable @Min(1) Long id) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         commentService.deleteCommentById(id),
@@ -40,7 +41,7 @@ public class CommentController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse<CommentDto>> updateCommentById(@PathVariable Long id, @RequestBody CommentRequest commentRequest){
+    public ResponseEntity<ApiResponse<CommentDto>> updateCommentById(@PathVariable @Min(1) Long id, @RequestBody CommentRequest commentRequest){
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         commentService.updateCommentById(id, commentRequest),

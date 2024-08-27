@@ -4,6 +4,7 @@ import com.api.miniproject.miniproject.exception.CustomNotFoundException;
 import com.api.miniproject.miniproject.model.dto.UserDto;
 import com.api.miniproject.miniproject.model.enums.Enums;
 import com.api.miniproject.miniproject.model.request.AuthRequest;
+import com.api.miniproject.miniproject.model.request.PasswordRequest;
 import com.api.miniproject.miniproject.model.request.UserRequest;
 import com.api.miniproject.miniproject.configuration.security.JwtService;
 import com.api.miniproject.miniproject.model.response.ApiResponse;
@@ -71,6 +72,17 @@ public class AuthenticationController {
                 APIResponseUtil.apiResponse(
                         Collections.singletonMap("token", token),
                         HttpStatus.CONTINUE
+                )
+        );
+    }
+
+    @Operation(summary = "Forget password")
+    @PutMapping("forgetPassword")
+    public ResponseEntity<ApiResponse<UserDto>> forgetPassword(@Valid @RequestBody PasswordRequest passwordRequest) {
+        return ResponseEntity.ok(
+                APIResponseUtil.apiResponse(
+                        appUserService.forgetPassword(passwordRequest),
+                        HttpStatus.OK
                 )
         );
     }

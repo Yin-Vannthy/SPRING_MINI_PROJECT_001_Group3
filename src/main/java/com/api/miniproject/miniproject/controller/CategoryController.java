@@ -8,6 +8,7 @@ import com.api.miniproject.miniproject.model.response.ApiResponse;
 import com.api.miniproject.miniproject.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class CategoryController {
 
     @Operation(summary = "Get a category by Id")
     @GetMapping("getCategory/{categoryId}")
-    public ResponseEntity<ApiResponse<CategoryDto>> getCategory(@PathVariable Long categoryId) {
+    public ResponseEntity<ApiResponse<CategoryDto>> getCategory(@PathVariable @Min(1) Long categoryId) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         categoryService.getCategory(categoryId),
@@ -47,7 +48,7 @@ public class CategoryController {
 
     @Operation(summary = "Update a category by Id")
     @PutMapping("updateCategory/{categoryId}")
-    public ResponseEntity<ApiResponse<CategoryDto>> updateCategory(@RequestBody CategoryRequest categoryRequest, @PathVariable Long categoryId) {
+    public ResponseEntity<ApiResponse<CategoryDto>> updateCategory(@RequestBody CategoryRequest categoryRequest, @PathVariable @Min(1) Long categoryId) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         categoryService.updateCategory(categoryRequest, categoryId),
@@ -59,8 +60,8 @@ public class CategoryController {
     @Operation(summary = "Get all categories")
     @GetMapping("getCategories/all")
     public ResponseEntity<ApiResponse<List<CategoryDto>>> getCategories(
-            @RequestParam(defaultValue = "0", required = false) Integer pageNo,
-            @RequestParam(defaultValue = "5", required = false) Integer pageSize,
+            @RequestParam(defaultValue = "0", required = false) @Min(0) Integer pageNo,
+            @RequestParam(defaultValue = "5", required = false) @Min(1) Integer pageSize,
             @RequestParam(defaultValue = "categoryId", required = false) Enums.Category sortBy,
             @RequestParam(defaultValue = "DESC", required = false) Sort.Direction sortDirection
     ) {
@@ -74,11 +75,10 @@ public class CategoryController {
 
     @Operation(summary = "Delete a category by Id")
     @DeleteMapping("deleteCategory/{categoryId}")
-    public ResponseEntity<ApiResponse<?>> deleteCategory(@PathVariable Long categoryId) {
-        categoryService.deleteCategory(categoryId);
+    public ResponseEntity<ApiResponse<?>> deleteCategory(@PathVariable @Min(1) Long categoryId) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
-                        null,
+                        categoryService.deleteCategory(categoryId),
                         HttpStatus.OK
                 )
         );

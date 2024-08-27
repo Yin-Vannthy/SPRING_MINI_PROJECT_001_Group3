@@ -10,6 +10,7 @@ import com.api.miniproject.miniproject.service.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class ArticleController {
 
     @Operation(summary = "Get an article by Id")
     @GetMapping("article/{articleId}")
-    public ResponseEntity<ApiResponse<ArticleDto>> getArticle(@PathVariable Long articleId) {
+    public ResponseEntity<ApiResponse<ArticleDto>> getArticle(@PathVariable @Min(1) Long articleId) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         articleService.getArticle(articleId),
@@ -49,7 +50,7 @@ public class ArticleController {
 
     @Operation(summary = "Delete an article by Id")
     @DeleteMapping("author/article/{articleId}")
-    public ResponseEntity<ApiResponse<?>> deleteArticle(@PathVariable Long articleId) {
+    public ResponseEntity<ApiResponse<?>> deleteArticle(@PathVariable @Min(1) Long articleId) {
         articleService.deleteArticle(articleId);
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
@@ -61,7 +62,7 @@ public class ArticleController {
 
     @Operation(summary = "Update an article by Id")
     @PutMapping("author/article/{articleId}")
-    public ResponseEntity<ApiResponse<ArticleDto>> updateArticle(@PathVariable Long articleId, @Valid @RequestBody ArticleRequest articleRequest) {
+    public ResponseEntity<ApiResponse<ArticleDto>> updateArticle(@PathVariable @Min(1) Long articleId, @Valid @RequestBody ArticleRequest articleRequest) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         articleService.updateArticle(articleId, articleRequest),
@@ -73,8 +74,8 @@ public class ArticleController {
     @Operation(summary = "Get all articles")
     @GetMapping("article/all")
     public ResponseEntity<ApiResponse<List<ArticleDto>>> getAllArticles(
-            @RequestParam(defaultValue = "0", required = false) Integer pageNo,
-            @RequestParam(defaultValue = "10", required = false) Integer pageSize,
+            @RequestParam(defaultValue = "0", required = false) @Min(0) Integer pageNo,
+            @RequestParam(defaultValue = "10", required = false) @Min(1) Integer pageSize,
             @RequestParam(defaultValue = "articleId", required = false) Enums.Article sortBy,
             @RequestParam(defaultValue = "DESC", required = false) Sort.Direction sortDirection
     ) {
@@ -88,7 +89,7 @@ public class ArticleController {
 
     @Operation(summary = "Create a comment on an article via its Id")
     @PostMapping("article/{articleId}/comment")
-    public ResponseEntity<ApiResponse<ArticleDto>> createComment(@PathVariable Long articleId, @Valid @RequestBody CommentRequest commentRequest) {
+    public ResponseEntity<ApiResponse<ArticleDto>> createComment(@PathVariable @Min(1) Long articleId, @Valid @RequestBody CommentRequest commentRequest) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         articleService.createComment(articleId, commentRequest),
@@ -99,7 +100,7 @@ public class ArticleController {
 
     @Operation(summary = "Get comments on an article via its Id")
     @GetMapping("article/{articleId}/comment")
-    public ResponseEntity<ApiResponse<ArticleDto>> getComments(@PathVariable Long articleId) {
+    public ResponseEntity<ApiResponse<ArticleDto>> getComments(@PathVariable @Min(1) Long articleId) {
         return ResponseEntity.ok(
                 APIResponseUtil.apiResponse(
                         articleService.getComments(articleId),
