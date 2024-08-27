@@ -36,7 +36,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         Sort sort = Sort.by(sortDirection, sortBy.name());
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        Page<Article> articles = articleRepository.findAll(pageable);
+        Page<Article> articles = articleRepository.findAllByUserUserIdAnd(pageable, CurrentUser.getCurrentUser().getUserId());
 
         return articles.getContent().stream()
                 .filter(article -> article.getBookmarks().stream().anyMatch(Bookmark::getStatus))
