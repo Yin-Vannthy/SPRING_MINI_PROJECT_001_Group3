@@ -27,6 +27,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     void deleteArticleByArticleIdAndUserUserId(Long articleId, Long userId);
 
+    @Query("""
+        SELECT a FROM Article a JOIN Bookmark b ON b.article.articleId = a.articleId
+        WHERE b.user.userId = :userId AND b.status = TRUE
+    """)
     Page<Article> findArticleByUserUserId(Pageable pageable, Long userId);
 
     Optional<Article> findArticleByTitleAndUserUserId(String title, Long userId);

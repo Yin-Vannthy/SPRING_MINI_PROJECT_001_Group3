@@ -32,6 +32,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     @Override
     public String createBookmark(Long articleId) {
+        if (bookmarkRepository.findBookmarkByArticleArticleIdAndUserUserId(articleId, currentUser().getUserId()).isPresent()) {
+            throw new CustomNotFoundException("The article with Id : " + articleId + " is already bookmarked");
+        }
         bookmarkRepository.save(new Bookmark(articleService.getArticle(articleId).toArticleEntity(), currentUser()));
         return "An article with Id : " + articleId + " is bookmarked successfully.";
     }
@@ -43,9 +46,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 
         bookmark.setStatus(!bookmark.getStatus());
         bookmark.setUpdatedAt(LocalDateTime.now());
-        bookmarkRepository.save(bookmark);
 
-        return bookmark.getStatus() ?
+        return bookmarkRepository.save(bookmark).getStatus() ?
                 "An article with Id : " + articleId + " is bookmarked successfully." :
                 "An article with Id : " + articleId + " is unmarked successfully.";
     }
@@ -54,10 +56,9 @@ public class BookmarkServiceImpl implements BookmarkService {
     public List<ArticleDto> getBookmarks(Integer pageNo, Integer pageSize, Enums.Article sortBy, Sort.Direction sortDirection) {
         Sort sort = Sort.by(sortDirection, sortBy.name());
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        List<Article> articles = articleService.findAllByUserId(pageable, currentUser().getUserId());
 
-        return articles.stream()
-                .filter(article -> article.getBookmarks().stream().anyMatch(Bookmark::getStatus))
+        return articleService.findAllByUserId(pageable, currentUser().getUserId())
+                .stream()
                 .map(Article::toArticleResponseWithRelatedData)
                 .collect(Collectors.toList());
     }
