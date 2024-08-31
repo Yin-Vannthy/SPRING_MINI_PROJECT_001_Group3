@@ -40,6 +40,7 @@ public class OpenApiConfig {
                 operation.getResponses().put("403", new ApiResponse().description("Forbidden").content(content));
                 operation.getResponses().put("404", new ApiResponse().description("Resource Not Found").content(content));
                 operation.getResponses().put("409", new ApiResponse().description("Conflict").content(content));
+                operation.getResponses().put("500", new ApiResponse().description("Internal Server Error").content(content));
             }));
         };
     }

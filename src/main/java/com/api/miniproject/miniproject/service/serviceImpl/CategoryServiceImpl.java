@@ -39,13 +39,15 @@ public class CategoryServiceImpl implements CategoryService {
         if (getCategoryByName(categoryRequest.getCategoryName().trim()).isPresent()) {
             throw new CustomNotFoundException("Category with name: " + categoryRequest.getCategoryName().trim() + " is already in use.");
         }
-        return categoryRepository.save(categoryRequest.toCategoryEntity(currentUser())).toCategoryResponse();
+        return categoryRepository.save(categoryRequest.toCategoryEntity(currentUser()))
+                .toCategoryResponse();
     }
 
     @Override
     public CategoryDto getCategory(Long categoryId) {
         Category category = categoryRepository.findByCategoryIdAndUserUserId(categoryId, currentUser().getUserId())
                 .orElseThrow(() -> new CustomNotFoundException("No category with Id : " + categoryId + " was found."));
+
         return category.toCategoryResponse(getArticlesByCategoryId(categoryId));
     }
 
@@ -60,7 +62,8 @@ public class CategoryServiceImpl implements CategoryService {
 
         category.updateCategoryEntity(categoryRequest, currentUser());
 
-        return categoryRepository.save(category).toCategoryResponse(getArticlesByCategoryId(categoryId));
+        return categoryRepository.save(category)
+                .toCategoryResponse(getArticlesByCategoryId(categoryId));
     }
 
     @Override
@@ -68,7 +71,8 @@ public class CategoryServiceImpl implements CategoryService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortDirection, sortBy.name()));
         List<Category> categories = categoryRepository.findAll(pageable).getContent();
 
-        return categories.stream()
+        return categories
+                .stream()
                 .map(category -> category.toCategoryResponse(getArticlesByCategoryId(category.getCategoryId())))
                 .toList();
     }

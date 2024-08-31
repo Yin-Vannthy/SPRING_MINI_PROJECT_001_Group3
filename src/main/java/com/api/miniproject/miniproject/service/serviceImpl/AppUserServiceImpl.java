@@ -24,8 +24,8 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email.toLowerCase().trim()).orElseThrow(
-                () -> new CustomNotFoundException("No user found with email " + email)
+        return userRepository.findByEmail(email.toLowerCase().trim())
+                .orElseThrow(() -> new CustomNotFoundException("No user found with email " + email)
         );
     }
 
@@ -38,7 +38,9 @@ public class AppUserServiceImpl implements AppUserService {
         if (userRepository.findByEmail(userRequest.getEmail().toLowerCase().trim()).isPresent()) {
             throw new CustomNotFoundException("This email is already in use");
         }
-        return userRepository.save(userRequest.toUserEntity(role.name(), passwordEncoder.encode(userRequest.getPassword()).trim())).toUserResponse();
+        return userRepository
+                .save(userRequest.toUserEntity(role.name(), passwordEncoder.encode(userRequest.getPassword()).trim()))
+                .toUserResponse();
     }
 
     @Override

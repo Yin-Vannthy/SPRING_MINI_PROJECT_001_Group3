@@ -36,6 +36,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             throw new CustomNotFoundException("The article with Id : " + articleId + " is already bookmarked");
         }
         bookmarkRepository.save(new Bookmark(articleService.getArticle(articleId).toArticleEntity(), currentUser()));
+
         return "An article with Id : " + articleId + " is bookmarked successfully.";
     }
 

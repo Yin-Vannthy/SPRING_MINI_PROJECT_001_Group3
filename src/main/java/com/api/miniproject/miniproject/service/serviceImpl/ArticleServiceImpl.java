@@ -60,7 +60,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleDto createArticle(ArticleRequest articleRequest) {
-        Set<Category> categories = articleRequest.getCategoriesId().stream()
+        Set<Category> categories = articleRequest.getCategoriesId()
+                .stream()
                 .map(this::getCategoryOrThrow)
                 .collect(Collectors.toSet());
 
@@ -73,9 +74,11 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = new Article(articleRequest, currentUser());
         articleRepository.save(article);
 
-        Set<CategoryArticle> categoryArticles = categories.stream()
+        Set<CategoryArticle> categoryArticles = categories
+                .stream()
                 .map(category -> new CategoryArticle(category, article))
                 .collect(Collectors.toSet());
+
         categoryArticleRepository.saveAll(categoryArticles);
 
         categories.forEach(this::updateCategoryArticleCount);
@@ -116,13 +119,15 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepository.save(articleRequest.toArticleEntity(article, currentUser()));
 
-        Set<Category> categories = articleRequest.getCategoriesId().stream()
+        Set<Category> categories = articleRequest.getCategoriesId()
+                .stream()
                 .map(this::getCategoryOrThrow)
                 .collect(Collectors.toSet());
 
         categoryArticleRepository.deleteByArticleArticleId(articleId);
 
-        Set<CategoryArticle> categoryArticles = categories.stream()
+        Set<CategoryArticle> categoryArticles = categories
+                .stream()
                 .map(category -> new CategoryArticle(category, article))
                 .collect(Collectors.toSet());
         categoryArticleRepository.saveAll(categoryArticles);
@@ -137,7 +142,8 @@ public class ArticleServiceImpl implements ArticleService {
         Sort sort = Sort.by(sortDirection, sortBy.name());
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
-        return articleRepository.findAll(pageable).getContent().stream()
+        return articleRepository.findAll(pageable).getContent()
+                .stream()
                 .map(Article::toArticleResponseWithRelatedData)
                 .collect(Collectors.toList());
     }

@@ -25,7 +25,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void createComment(CommentRequest commentRequest, Article article, AppUser appUser) {
-        commentRepository.save(new Comment(commentRequest, article, appUser)).toCommentResponse();
+        commentRepository.save(new Comment(commentRequest, article, appUser))
+                .toCommentResponse();
     }
 
     @Override
@@ -43,7 +44,9 @@ public class CommentServiceImpl implements CommentService {
 
         comment.setCmt(commentRequest.getComment().trim());
         comment.setUpdatedAt(LocalDateTime.now());
-        return commentRepository.save(comment).toCommentResponse();
+
+        return commentRepository.save(comment)
+                .toCommentResponse();
     }
 
     @Override
@@ -51,6 +54,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository
                 .findCommentByCommentIdAndUserUserId(commentId, currentUser().getUserId())
                 .orElseThrow(() -> new CustomNotFoundException("You are not the owner of the comment with Id : " + commentId));
+
         commentRepository.deleteById(commentId);
 
         return "Comment with Id : " + commentId + " was deleted successfully.";

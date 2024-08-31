@@ -28,4 +28,6 @@ aws:
   region: ap-southeast-2
 
 server:
-  port: 8080
+  port: 8081
+  error:
+    include-stacktrace: never
